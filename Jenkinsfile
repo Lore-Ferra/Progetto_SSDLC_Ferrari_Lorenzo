@@ -7,6 +7,7 @@ pipeline {
 
     environment {
         SONARQUBE_ENV = 'SonarQubeLocal'
+        NVD_API_KEY = credentials('NVD_API_KEY')
     }
 
     stages {
@@ -38,8 +39,10 @@ pipeline {
 
         stage('SCA - OWASP Dependency Check') {
             steps {
-                echo "Running Software Composition Analysis with OWASP Dependency Check..."
-                sh 'mvn org.owasp:dependency-check-maven:check'
+                dir('repo_git/onlinebookstore') {
+                    echo "Running Software Composition Analysis with OWASP Dependency Check..."
+                    sh "mvn org.owasp:dependency-check-maven:check -Dnvd.api.key=${env.NVD_API_KEY}"
+                }
             }
         }
 
