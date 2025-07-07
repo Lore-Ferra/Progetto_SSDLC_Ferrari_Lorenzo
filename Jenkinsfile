@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven-3.9.10'
+    }
+
+    environment {
+        SONARQUBE_ENV = 'SonarQubeLocal'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo "Cloning the repository..."
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo "Building the project with Maven..."
+                sh 'mvn clean install'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv("${env.SONARQUBE_ENV}") {
+                    sh 'mvn sonar:sonar'
+                }
+            }
+        }
+    }
+}
