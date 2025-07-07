@@ -20,14 +20,18 @@ pipeline {
         stage('Build') {
             steps {
                 echo "Building the project with Maven..."
-                sh 'mvn clean install'
+                dir('repo_git/onlinebookstore') {
+                    sh 'mvn clean install'
+                }
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv("${env.SONARQUBE_ENV}") {
-                    sh 'mvn sonar:sonar'
+                dir('repo_git/onlinebookstore') {
+                    withSonarQubeEnv("${env.SONARQUBE_ENV}") {
+                        sh 'mvn sonar:sonar'
+                    }
                 }
             }
         }
