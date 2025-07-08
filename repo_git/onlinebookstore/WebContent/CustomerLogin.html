@@ -158,7 +158,7 @@ input {
 				why += "- Please Enter CAPTCHA Code.\n";
 			}
 			if (theform.CaptchaInput.value != "") {
-				if (ValidCaptcha(theform.CaptchaInput.value) == false) {
+				if (!ValidCaptcha(theform.CaptchaInput.value)) {
 					why += "- The CAPTCHA Code Does Not Match.\n";
 				}
 			}
