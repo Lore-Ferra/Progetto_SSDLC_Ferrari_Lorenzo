@@ -1,6 +1,7 @@
 package com.bittercode.service.impl;
 
 import com.bittercode.model.Book;
+import com.bittercode.model.StoreException;
 import com.bittercode.util.DBUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,6 +63,16 @@ class BookServiceImplTest {
     }
 
     @Test
+    void testGetAllBooksSQLException() throws Exception {
+        when(mockConnection.prepareStatement(anyString())).thenThrow(new SQLException("Mock SQL Error"));
+
+        List<Book> books = bookService.getAllBooks();
+
+        assertNotNull(books);
+        assertEquals(0, books.size());
+    }
+
+    @Test
     void testAddBookReturnsSuccess() throws Exception {
         Book book = new Book("001", "Book Title", "Author", 100, 10);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockStatement);
@@ -70,6 +81,16 @@ class BookServiceImplTest {
         String result = bookService.addBook(book);
 
         assertEquals("SUCCESS", result);
+    }
+
+    @Test
+    void testAddBookReturnsFailure() throws SQLException, StoreException {
+        Book book = new Book("002", "Book Title", "Author", 100, 10);
+        when(mockConnection.prepareStatement(anyString())).thenThrow(new RuntimeException("DB Error"));
+
+        String result = bookService.addBook(book);
+
+        assertTrue(result.startsWith("FAILURE"));
     }
 
     @Test
@@ -83,6 +104,15 @@ class BookServiceImplTest {
     }
 
     @Test
+    void testDeleteBookReturnsFailure() throws SQLException, StoreException {
+        when(mockConnection.prepareStatement(anyString())).thenThrow(new RuntimeException("Delete Error"));
+
+        String result = bookService.deleteBookById("001");
+
+        assertTrue(result.startsWith("FAILURE"));
+    }
+
+    @Test
     void testUpdateBookQtyReturnsSuccess() throws Exception {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockStatement);
         when(mockStatement.executeUpdate()).thenReturn(1);
@@ -90,6 +120,15 @@ class BookServiceImplTest {
         String result = bookService.updateBookQtyById("001", 20);
 
         assertEquals("SUCCESS", result);
+    }
+
+    @Test
+    void testUpdateBookQtyReturnsFailure() throws SQLException, StoreException {
+        when(mockConnection.prepareStatement(anyString())).thenThrow(new RuntimeException("UpdateQty Error"));
+
+        String result = bookService.updateBookQtyById("001", 20);
+
+        assertTrue(result.startsWith("FAILURE"));
     }
 
     @Test
@@ -101,6 +140,16 @@ class BookServiceImplTest {
         String result = bookService.updateBook(book);
 
         assertEquals("SUCCESS", result);
+    }
+
+    @Test
+    void testUpdateBookReturnsFailure() throws SQLException, StoreException {
+        Book book = new Book("001", "Book Title", "Author", 100, 10);
+        when(mockConnection.prepareStatement(anyString())).thenThrow(new RuntimeException("Update Error"));
+
+        String result = bookService.updateBook(book);
+
+        assertTrue(result.startsWith("FAILURE"));
     }
 
     @Test
@@ -121,20 +170,36 @@ class BookServiceImplTest {
     }
 
     @Test
-    void testAddBookReturnsFailure() throws Exception {
-        Book book = new Book("002", "Book Title", "Author", 100, 10);
-        when(mockConnection.prepareStatement(anyString())).thenThrow(new RuntimeException("DB Error"));
+    void testGetBookByIdReturnsNullOnSQLException() throws Exception {
+        when(mockConnection.prepareStatement(anyString())).thenThrow(new SQLException("Error"));
 
-        String result = bookService.addBook(book);
+        Book book = bookService.getBookById("001");
 
-        assertTrue(result.startsWith("FAILURE"));
+        assertNull(book);
     }
 
     @Test
-    void testGetAllBooksSQLException() throws Exception {
-        when(mockConnection.prepareStatement(anyString())).thenThrow(new SQLException("DB error"));
+    void testGetBooksByCommaSeparatedBookIdsReturnsBooks() throws Exception {
+        when(mockConnection.prepareStatement(anyString())).thenReturn(mockStatement);
+        when(mockStatement.executeQuery()).thenReturn(mockResultSet);
+        when(mockResultSet.next()).thenReturn(true).thenReturn(false);
+        when(mockResultSet.getString(1)).thenReturn("001");
+        when(mockResultSet.getString(2)).thenReturn("Book Title");
+        when(mockResultSet.getString(3)).thenReturn("Author");
+        when(mockResultSet.getInt(4)).thenReturn(100);
+        when(mockResultSet.getInt(5)).thenReturn(10);
 
-        List<Book> books = bookService.getAllBooks();
+        List<Book> books = bookService.getBooksByCommaSeperatedBookIds("'001'");
+
+        assertEquals(1, books.size());
+        assertEquals("001", books.get(0).getBarcode());
+    }
+
+    @Test
+    void testGetBooksByCommaSeparatedBookIdsSQLException() throws Exception {
+        when(mockConnection.prepareStatement(anyString())).thenThrow(new SQLException("Error"));
+
+        List<Book> books = bookService.getBooksByCommaSeperatedBookIds("'001','002'");
 
         assertNotNull(books);
         assertEquals(0, books.size());
