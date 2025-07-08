@@ -37,6 +37,14 @@ pipeline {
             }
         }
 
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 2, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
         stage('SCA - OWASP Dependency Check') {
             steps {
                 dir('repo_git/onlinebookstore') {
@@ -46,8 +54,9 @@ pipeline {
             }
         }
 
-        stage('Archiviazione Report') {
+        stage('Archiviazione Artefatti') {
             steps {
+                archiveArtifacts artifacts: 'repo_git/onlinebookstore/target/*.war', fingerprint: true
                 archiveArtifacts artifacts: 'repo_git/onlinebookstore/target/dependency-check-report.*', fingerprint: true
             }
         }
