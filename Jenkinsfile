@@ -65,23 +65,30 @@ pipeline {
                 archiveArtifacts artifacts: 'repo_git/onlinebookstore/target/dependency-check-report.*', fingerprint: true
             }
         }
-
-        stage('Notifica') {
-            steps {
-                script {
-                    def msg = [
-                        username: "Jenkins Bot",
-                        content: ":shield: *Build completata!* Progetto `onlinebookstore` ha superato tutte le scansioni di sicurezza."
-                    ]
-
-                    def webhook = credentials('DISCORD_WEBHOOK_URL')
-
-                    httpRequest httpMode: 'POST',
-                                contentType: 'APPLICATION_JSON',
-                                url: webhook,
-                                requestBody: groovy.json.JsonOutput.toJson(msg)
-                }
-            }
+    }
+    post {
+        success {
+            sendDiscordMessage(":white_check_mark: *Build riuscita!* Progetto `onlinebookstore` ha completato tutte le scansioni con successo.")
         }
+        failure {
+            sendDiscordMessage("*Build fallita!* Ci sono stati errori nella pipeline di `onlinebookstore`.")
+        }
+        always {
+            echo "Pipeline completata. Notifica inviata."
+        }
+    }
+}
+
+def sendDiscordMessage(String content) {
+    withCredentials([string(credentialsId: 'DISCORD_WEBHOOK_URL', variable: 'WEBHOOK')]) {
+        def msg = [
+            username: "Jenkins Bot",
+            content: content
+        ]
+
+        httpRequest httpMode: 'POST',
+                    contentType: 'APPLICATION_JSON',
+                    url: "${WEBHOOK}",
+                    requestBody: groovy.json.JsonOutput.toJson(msg)
     }
 }
