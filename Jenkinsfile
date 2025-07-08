@@ -54,7 +54,7 @@ pipeline {
             steps {
                 dir('repo_git/onlinebookstore') {
                     echo "Running Software Composition Analysis with OWASP Dependency Check..."
-                    sh "mvn org.owasp:dependency-check-maven:check -Dnvd.api.key=${env.NVD_API_KEY}"
+                    sh 'mvn org.owasp:dependency-check-maven:check -Dnvd.api.key=$NVD_API_KEY'
                 }
             }
         }
