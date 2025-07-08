@@ -22,7 +22,7 @@ pipeline {
             steps {
                 echo "Building the project with Maven..."
                 dir('repo_git/onlinebookstore') {
-                    sh 'mvn clean install'
+                    sh 'mvn clean verify'
                 }
             }
         }
