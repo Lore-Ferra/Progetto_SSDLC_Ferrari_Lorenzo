@@ -40,10 +40,12 @@ pipeline {
 
         stage('Quality Gate') {
             steps {
+                script {
+                    echo "Aspetto 15 secondi per permettere a SonarQube di completare l'analisi..."
+                    sleep time: 15, unit: 'SECONDS'
+                }
                 timeout(time: 5, unit: 'MINUTES') {
-                    script {
-                        waitForQualityGate abortPipeline: true
-                    }
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
