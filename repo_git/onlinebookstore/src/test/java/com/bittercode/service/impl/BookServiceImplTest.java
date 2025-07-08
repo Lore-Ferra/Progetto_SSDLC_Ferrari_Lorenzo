@@ -10,9 +10,11 @@ import org.mockito.MockedStatic;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 class BookServiceImplTest {
@@ -24,7 +26,7 @@ class BookServiceImplTest {
     private MockedStatic<DBUtil> dbUtilMockedStatic;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         bookService = new BookServiceImpl();
 
         mockConnection = mock(Connection.class);
@@ -116,5 +118,25 @@ class BookServiceImplTest {
 
         assertNotNull(book);
         assertEquals("001", book.getBarcode());
+    }
+
+    @Test
+    void testAddBookReturnsFailure() throws Exception {
+        Book book = new Book("002", "Book Title", "Author", 100, 10);
+        when(mockConnection.prepareStatement(anyString())).thenThrow(new RuntimeException("DB Error"));
+
+        String result = bookService.addBook(book);
+
+        assertTrue(result.startsWith("FAILURE"));
+    }
+
+    @Test
+    void testGetAllBooksSQLException() throws Exception {
+        when(mockConnection.prepareStatement(anyString())).thenThrow(new SQLException("DB error"));
+
+        List<Book> books = bookService.getAllBooks();
+
+        assertNotNull(books);
+        assertEquals(0, books.size());
     }
 }
