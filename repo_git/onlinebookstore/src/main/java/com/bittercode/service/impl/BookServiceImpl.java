@@ -63,7 +63,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> getAllBooks() throws StoreException {
-        List<Book> books = new ArrayList<Book>();
+        List<Book> books = new ArrayList<>();
         Connection con = DBUtil.getConnection();
 
         try {
@@ -145,7 +145,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> getBooksByCommaSeperatedBookIds(String commaSeperatedBookIds) throws StoreException {
-        List<Book> books = new ArrayList<Book>();
+        List<Book> books = new ArrayList<>();
         Connection con = DBUtil.getConnection();
         try {
             String getBooksByCommaSeperatedBookIdsQuery = "SELECT * FROM " + BooksDBConstants.TABLE_BOOK
