@@ -32,6 +32,7 @@ pipeline {
                 dir('repo_git/onlinebookstore') {
                     withSonarQubeEnv("${env.SONARQUBE_ENV}") {
                         sh 'mvn sonar:sonar'
+                        sh 'cat target/sonar/report-task.txt || true'
                     }
                 }
             }
