@@ -68,10 +68,32 @@ pipeline {
     }
     post {
         success {
-            sendDiscordMessage(":white_check_mark: *Build riuscita!* Progetto `onlinebookstore` ha completato tutte le scansioni con successo.")
+            script {
+                def msg = """
+    :white_check_mark: *Build riuscita!*
+
+    **Progetto**: `onlinebookstore`
+    **Branch**: `${env.GIT_BRANCH ?: 'sconosciuto'}`
+    **Build**: [#${env.BUILD_NUMBER}](${env.BUILD_URL ?: 'URL non disponibile'})
+
+    Tutte le scansioni di sicurezza sono state superate con successo. :lock:
+    """
+                sendDiscordMessage(msg.trim())
+            }
         }
         failure {
-            sendDiscordMessage("*Build fallita!* Ci sono stati errori nella pipeline di `onlinebookstore`.")
+            script {
+                def msg = """
+    :x: *Build fallita!*
+
+    **Progetto**: `onlinebookstore`
+    **Branch**: `${env.GIT_BRANCH ?: 'sconosciuto'}`
+    **Build**: [#${env.BUILD_NUMBER}](${env.BUILD_URL ?: 'URL non disponibile'})
+
+    Sono stati rilevati errori nella pipeline o nelle scansioni di sicurezza. :warning:
+    """
+                sendDiscordMessage(msg.trim())
+            }
         }
         always {
             echo "Pipeline completata. Notifica inviata."
