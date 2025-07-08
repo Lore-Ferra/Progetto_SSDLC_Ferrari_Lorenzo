@@ -5,6 +5,11 @@
 	<groupId>onlinebookstore</groupId>
 	<artifactId>onlinebookstore</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<properties>
+	<sonar.coverage.jacoco.xmlReportPaths>
+		target/site/jacoco/jacoco.xml
+	</sonar.coverage.jacoco.xmlReportPaths>
+	</properties>
 	<packaging>war</packaging>
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
@@ -47,6 +52,25 @@
 				<configuration>
 					<warSourceDirectory>WebContent</warSourceDirectory>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.11</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.owasp</groupId>
