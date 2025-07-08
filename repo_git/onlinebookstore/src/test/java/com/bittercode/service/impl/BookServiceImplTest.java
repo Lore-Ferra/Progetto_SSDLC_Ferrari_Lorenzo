@@ -2,6 +2,7 @@ package com.bittercode.service.impl;
 
 import com.bittercode.model.Book;
 import com.bittercode.util.DBUtil;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -20,6 +21,7 @@ class BookServiceImplTest {
     private Connection mockConnection;
     private PreparedStatement mockStatement;
     private ResultSet mockResultSet;
+    private MockedStatic<DBUtil> dbUtilMockedStatic;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -29,8 +31,15 @@ class BookServiceImplTest {
         mockStatement = mock(PreparedStatement.class);
         mockResultSet = mock(ResultSet.class);
 
-        MockedStatic<DBUtil> dbUtilMockedStatic = mockStatic(DBUtil.class);
+        dbUtilMockedStatic = mockStatic(DBUtil.class);
         dbUtilMockedStatic.when(DBUtil::getConnection).thenReturn(mockConnection);
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (dbUtilMockedStatic != null) {
+            dbUtilMockedStatic.close();
+        }
     }
 
     @Test
