@@ -65,5 +65,23 @@ pipeline {
                 archiveArtifacts artifacts: 'repo_git/onlinebookstore/target/dependency-check-report.*', fingerprint: true
             }
         }
+
+        stage('Notifica') {
+            steps {
+                script {
+                    def msg = [
+                        username: "Jenkins Bot",
+                        content: ":shield: *Build completata!* Progetto `onlinebookstore` ha superato tutte le scansioni di sicurezza."
+                    ]
+
+                    def webhook = credentials('DISCORD_WEBHOOK_URL')
+
+                    httpRequest httpMode: 'POST',
+                                contentType: 'APPLICATION_JSON',
+                                url: webhook,
+                                requestBody: groovy.json.JsonOutput.toJson(msg)
+                }
+            }
+        }
     }
 }
