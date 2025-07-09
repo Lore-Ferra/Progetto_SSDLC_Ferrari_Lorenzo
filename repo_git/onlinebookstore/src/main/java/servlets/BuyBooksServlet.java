@@ -36,7 +36,7 @@ public class BuyBooksServlet extends HttpServlet {
             showBooksToCustomer(req, res, pw);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error while processing BuyBooksServlet: " + e.getMessage());
         }
     }
 
@@ -45,7 +45,7 @@ public class BuyBooksServlet extends HttpServlet {
             RequestDispatcher rd = req.getRequestDispatcher("CustomerLogin.html");
             rd.include(req, res);
         } catch (IOException | ServletException e) {
-            e.printStackTrace();
+            System.err.println("Error while processing BuyBooksServlet: " + e.getMessage());
         }
 
         pw.println("<table class=\"tab\"><tr><td>Please Login First to Continue!!</td></tr></table>");
