@@ -73,11 +73,11 @@ public class BuyBooksServlet extends HttpServlet {
 
                 pw.println("<tr>");
                 pw.println("<td><input type=\"checkbox\" name=\"" + n + "\" value=\"pay\"></td>");
-                pw.println("<td>" + book.getBarcode() + "TD_CLOSE");
-                pw.println("<td>" + book.getName() + "TD_CLOSE");
-                pw.println("<td>" + book.getAuthor() + "TD_CLOSE");
-                pw.println("<td>" + book.getPrice() + "TD_CLOSE");
-                pw.println("<td>" + book.getQuantity() + "TD_CLOSE");
+                pw.println("<td>" + book.getBarcode() + TD_CLOSE);
+                pw.println("<td>" + book.getName() + TD_CLOSE);
+                pw.println("<td>" + book.getAuthor() + TD_CLOSE);
+                pw.println("<td>" + book.getPrice() + TD_CLOSE);
+                pw.println("<td>" + book.getQuantity() + TD_CLOSE);
                 pw.println("<td><input type=\"text\" name=\"" + q + "\" value=\"0\" style=\"text-align:center\"></td>");
                 pw.println("</tr>");
             }
