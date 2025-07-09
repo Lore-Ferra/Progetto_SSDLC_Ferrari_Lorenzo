@@ -111,4 +111,9 @@ class StoreUtilTest {
         assertTrue(output.contains("document.getElementById(activeTab).classList.remove(\"active\")"));
         assertTrue(output.contains("document.getElementById('books').classList.add(\"active\")"));
     }
+
+    @Test
+    void testStoreUtilConstructorCoverage() {
+        new StoreUtil();
+    }
 }
