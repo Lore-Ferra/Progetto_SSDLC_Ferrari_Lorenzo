@@ -84,7 +84,6 @@ public class UserServiceImpl implements UserService {
             int k = ps.executeUpdate();
             if (k == 1) {
                 responseMessage = ResponseCode.SUCCESS.name();
-                ;
             }
         } catch (Exception e) {
             responseMessage += " : " + e.getMessage();
