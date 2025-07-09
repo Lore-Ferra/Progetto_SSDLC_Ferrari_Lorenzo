@@ -12,6 +12,9 @@ import javax.servlet.http.HttpSession;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 class StoreUtilTest {
 
     private HttpServletRequest request;
@@ -93,5 +96,19 @@ class StoreUtilTest {
         boolean result = StoreUtil.isLoggedIn(UserRole.CUSTOMER, mockSession);
 
         assertFalse(result);
+    }
+
+    @Test
+    void testSetActiveTab() {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        String activeTab = "books";
+
+        StoreUtil.setActiveTab(pw, activeTab);
+        pw.flush();
+
+        String output = sw.toString();
+        assertTrue(output.contains("document.getElementById(activeTab).classList.remove(\"active\")"));
+        assertTrue(output.contains("document.getElementById('books').classList.add(\"active\")"));
     }
 }
