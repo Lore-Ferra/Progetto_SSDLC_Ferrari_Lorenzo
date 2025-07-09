@@ -56,7 +56,7 @@ class StoreUtilTest {
     @Test
     void testRemoveFromCartReduceQuantity() {
         when(request.getParameter("selectedBookId")).thenReturn("book3");
-        when(request.getParameter("addToCart")).thenReturn(null); // rimozione
+        when(request.getParameter("addToCart")).thenReturn(null);
         when(session.getAttribute("qty_book3")).thenReturn(2);
         when(session.getAttribute("items")).thenReturn("book1,book3");
 
