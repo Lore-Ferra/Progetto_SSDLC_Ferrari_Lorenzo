@@ -18,76 +18,72 @@ import com.bittercode.service.impl.BookServiceImpl;
 import com.bittercode.util.StoreUtil;
 
 public class BuyBooksServlet extends HttpServlet {
-    BookService bookService = new BookServiceImpl();
 
-    public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException {
-        PrintWriter pw = null;
+    private final BookService bookService = new BookServiceImpl();
 
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException {
         try {
-            pw = res.getWriter();
+            PrintWriter pw = res.getWriter();
             res.setContentType(BookStoreConstants.CONTENT_TYPE_TEXT_HTML);
 
             if (!StoreUtil.isLoggedIn(UserRole.CUSTOMER, req.getSession())) {
-                RequestDispatcher rd = req.getRequestDispatcher("CustomerLogin.html");
-                try {
-                    rd.include(req, res);
-                } catch (IOException | ServletException e) {
-                    e.printStackTrace();
-                }
-
-                pw.println("<table class=\"tab\"><tr><td>Please Login First to Continue!!</td></tr></table>");
+                redirectToLogin(req, res, pw);
                 return;
             }
 
-            try {
-                List<Book> books = bookService.getAllBooks();
-                RequestDispatcher rd = req.getRequestDispatcher("CustomerHome.html");
-                rd.include(req, res);
-
-                StoreUtil.setActiveTab(pw, "cart");
-
-                pw.println("<div class=\"tab hd brown \">Books Available In Our Store</div>");
-                pw.println("<div class=\"tab\"><form action=\"buys\" method=\"post\">");
-
-                pw.println("<table>\r\n" +
-                        "  <tr>\r\n" +
-                        "    <th>Books</th>\r\n" +
-                        "    <th>Code</th>\r\n" +
-                        "    <th>Name</th>\r\n" +
-                        "    <th>Author</th>\r\n" +
-                        "    <th>Price</th>\r\n" +
-                        "    <th>Avail</th>\r\n" +
-                        "    <th>Qty</th>\r\n" +
-                        "  </tr>");
-
-                int i = 0;
-                for (Book book : books) {
-                    String bCode = book.getBarcode();
-                    String bName = book.getName();
-                    String bAuthor = book.getAuthor();
-                    double bPrice = book.getPrice();
-                    int bAvl = book.getQuantity();
-
-                    i++;
-                    String n = "checked" + i;
-                    String q = "qty" + i;
-
-                    pw.println("<tr>\r\n" +
-                            "  <td><input type=\"checkbox\" name=" + n + " value=\"pay\"></td>");
-                    pw.println("<td>" + bCode + "</td>");
-                    pw.println("<td>" + bName + "</td>");
-                    pw.println("<td>" + bAuthor + "</td>");
-                    pw.println("<td>" + bPrice + "</td>");
-                    pw.println("<td>" + bAvl + "</td>");
-                    pw.println("<td><input type=\"text\" name=" + q + " value=\"0\" text-align=\"center\"></td></tr>");
-                }
-
-                pw.println("</table><input type=\"submit\" value=\" PAY NOW \"><br/></form></div>");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            showBooksToCustomer(req, res, pw);
 
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void redirectToLogin(HttpServletRequest req, HttpServletResponse res, PrintWriter pw) {
+        try {
+            RequestDispatcher rd = req.getRequestDispatcher("CustomerLogin.html");
+            rd.include(req, res);
+        } catch (IOException | ServletException e) {
+            e.printStackTrace();
+        }
+
+        pw.println("<table class=\"tab\"><tr><td>Please Login First to Continue!!</td></tr></table>");
+    }
+
+    private void showBooksToCustomer(HttpServletRequest req, HttpServletResponse res, PrintWriter pw) {
+        try {
+            List<Book> books = bookService.getAllBooks();
+            RequestDispatcher rd = req.getRequestDispatcher("CustomerHome.html");
+            rd.include(req, res);
+
+            StoreUtil.setActiveTab(pw, "cart");
+
+            pw.println("<div class=\"tab hd brown \">Books Available In Our Store</div>");
+            pw.println("<div class=\"tab\"><form action=\"buys\" method=\"post\">");
+
+            pw.println("<table><tr>" +
+                    "<th>Books</th><th>Code</th><th>Name</th><th>Author</th><th>Price</th><th>Avail</th><th>Qty</th>" +
+                    "</tr>");
+
+            int i = 0;
+            for (Book book : books) {
+                String n = "checked" + (++i);
+                String q = "qty" + i;
+
+                pw.println("<tr>");
+                pw.println("<td><input type=\"checkbox\" name=\"" + n + "\" value=\"pay\"></td>");
+                pw.println("<td>" + book.getBarcode() + "</td>");
+                pw.println("<td>" + book.getName() + "</td>");
+                pw.println("<td>" + book.getAuthor() + "</td>");
+                pw.println("<td>" + book.getPrice() + "</td>");
+                pw.println("<td>" + book.getQuantity() + "</td>");
+                pw.println("<td><input type=\"text\" name=\"" + q + "\" value=\"0\" style=\"text-align:center\"></td>");
+                pw.println("</tr>");
+            }
+
+            pw.println("</table><input type=\"submit\" value=\" PAY NOW \"><br/></form></div>");
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
