@@ -20,6 +20,7 @@ import com.bittercode.util.StoreUtil;
 public class BuyBooksServlet extends HttpServlet {
 
     private final BookService bookService = new BookServiceImpl();
+    private static final String TD_CLOSE = "</td>";
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException {
@@ -72,11 +73,11 @@ public class BuyBooksServlet extends HttpServlet {
 
                 pw.println("<tr>");
                 pw.println("<td><input type=\"checkbox\" name=\"" + n + "\" value=\"pay\"></td>");
-                pw.println("<td>" + book.getBarcode() + "</td>");
-                pw.println("<td>" + book.getName() + "</td>");
-                pw.println("<td>" + book.getAuthor() + "</td>");
-                pw.println("<td>" + book.getPrice() + "</td>");
-                pw.println("<td>" + book.getQuantity() + "</td>");
+                pw.println("<td>" + book.getBarcode() + "TD_CLOSE");
+                pw.println("<td>" + book.getName() + "TD_CLOSE");
+                pw.println("<td>" + book.getAuthor() + "TD_CLOSE");
+                pw.println("<td>" + book.getPrice() + "TD_CLOSE");
+                pw.println("<td>" + book.getQuantity() + "TD_CLOSE");
                 pw.println("<td><input type=\"text\" name=\"" + q + "\" value=\"0\" style=\"text-align:center\"></td>");
                 pw.println("</tr>");
             }
