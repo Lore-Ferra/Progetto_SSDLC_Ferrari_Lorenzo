@@ -19,8 +19,16 @@ import com.bittercode.util.StoreUtil;
 
 public class BuyBooksServlet extends HttpServlet {
 
-    private final BookService bookService = new BookServiceImpl();
+    private final BookService bookService;
     private static final String TD_CLOSE = "</td>";
+
+    public BuyBooksServlet() {
+        this(new BookServiceImpl());
+    }
+
+    public BuyBooksServlet(BookService bookService) {
+        this.bookService = bookService;
+    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException {
