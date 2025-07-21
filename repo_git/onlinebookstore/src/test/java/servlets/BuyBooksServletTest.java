@@ -67,16 +67,17 @@ class BuyBooksServletTest {
             storeUtilMock.when(() -> StoreUtil.isLoggedIn(UserRole.CUSTOMER, session)).thenReturn(true);
 
             Book book = new Book("B001", "Title", "Author", 10, 5);
-            BookService mockService = mock(BookService.class);
-            when(mockService.getAllBooks()).thenReturn(Collections.singletonList(book));
+            BookService mockedBookService = mock(BookService.class);
+            when(mockedBookService.getAllBooks()).thenReturn(Collections.singletonList(book));
 
-            bookServiceMock.when(BookServiceImpl::new).thenReturn(mockService);
+            bookServiceMock.when(BookServiceImpl::new).thenReturn(mockedBookService);
 
             servlet.doPost(request, response);
 
             writer.flush();
-            assertTrue(stringWriter.toString().contains("Books Available In Our Store"));
-            assertTrue(stringWriter.toString().contains("Title"));
+            String html = stringWriter.toString();
+            assertTrue(html.contains("Books Available In Our Store"));
+            assertTrue(html.contains("Title"));
         }
     }
 }
