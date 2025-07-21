@@ -53,7 +53,7 @@ public class CartServlet extends HttpServlet {
 
             // Read the books from the database with the respective bookIds
             List<Book> books = bookService.getBooksByCommaSeperatedBookIds(bookIds);
-            List<Cart> cartItems = new ArrayList<Cart>();
+            List<Cart> cartItems = new ArrayList<>();
             pw.println("<div id='topmid' style='background-color:grey'>Shopping Cart</div>");
             pw.println("<table class=\"table table-hover\" style='background-color:white'>\r\n"
                     + "  <thead>\r\n"
@@ -68,7 +68,7 @@ public class CartServlet extends HttpServlet {
                     + "  </thead>\r\n"
                     + "  <tbody>\r\n");
             double amountToPay = 0;
-            if (books == null || books.size() == 0) {
+            if (books == null || books.isEmpty()) {
                 pw.println("    <tr style='background-color:green'>\r\n"
                         + "      <th scope=\"row\" colspan='6' style='color:yellow; text-align:center;'> No Items In the Cart </th>\r\n"
                         + "    </tr>\r\n");
