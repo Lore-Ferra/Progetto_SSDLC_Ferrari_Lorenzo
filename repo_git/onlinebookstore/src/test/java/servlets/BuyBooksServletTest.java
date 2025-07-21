@@ -3,7 +3,6 @@ package servlets;
 import com.bittercode.model.Book;
 import com.bittercode.model.UserRole;
 import com.bittercode.service.BookService;
-import com.bittercode.service.impl.BookServiceImpl;
 import com.bittercode.util.StoreUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -61,16 +60,14 @@ class BuyBooksServletTest {
         when(session.getAttribute(UserRole.CUSTOMER.toString())).thenReturn("user@x.it");
         when(request.getRequestDispatcher("CustomerHome.html")).thenReturn(dispatcher);
 
-        try (MockedStatic<StoreUtil> storeUtilMock = mockStatic(StoreUtil.class);
-             MockedStatic<BookServiceImpl> bookServiceMock = mockStatic(BookServiceImpl.class)) {
+        Book book = new Book("B001", "Title", "Author", 10, 5);
+        BookService mockService = mock(BookService.class);
+        when(mockService.getAllBooks()).thenReturn(Collections.singletonList(book));
 
+        servlet = new BuyBooksServlet(mockService);
+
+        try (MockedStatic<StoreUtil> storeUtilMock = mockStatic(StoreUtil.class)) {
             storeUtilMock.when(() -> StoreUtil.isLoggedIn(UserRole.CUSTOMER, session)).thenReturn(true);
-
-            Book book = new Book("B001", "Title", "Author", 10, 5);
-            BookService mockedBookService = mock(BookService.class);
-            when(mockedBookService.getAllBooks()).thenReturn(Collections.singletonList(book));
-
-            bookServiceMock.when(BookServiceImpl::new).thenReturn(mockedBookService);
 
             servlet.doPost(request, response);
 
