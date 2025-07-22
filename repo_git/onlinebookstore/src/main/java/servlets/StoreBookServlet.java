@@ -76,6 +76,10 @@ public class StoreBookServlet extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
+            pw.println("<div id='topmid' style='background-color:grey'>Books Available In the Store</div>");
+            pw.println("<table class=\"table table-hover\" style='background-color:white'>");
+            pw.println("    <tr><td colspan='6'>Could not load books due to an internal error.</td></tr>");
+            pw.println("</table>");
         }
     }
 
