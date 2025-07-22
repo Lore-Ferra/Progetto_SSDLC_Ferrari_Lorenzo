@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.*;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -97,5 +98,13 @@ class CustomerLoginServletTest {
         verify(dispatcher).include(request, response);
         String result = outputWriter.toString();
         assertTrue(result.contains("Internal error occurred. Please try again later."));
+    }
+
+    @Test
+    void testHandlesIOExceptionFromGetWriter() throws Exception {
+        HttpServletResponse brokenResponse = mock(HttpServletResponse.class);
+        when(brokenResponse.getWriter()).thenThrow(new IOException("Simulated IO error"));
+        when(request.getSession()).thenReturn(session);
+        assertDoesNotThrow(() -> servlet.doPost(request, brokenResponse));
     }
 }
