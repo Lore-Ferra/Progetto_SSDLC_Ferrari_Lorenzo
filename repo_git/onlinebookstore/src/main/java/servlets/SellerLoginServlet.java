@@ -34,13 +34,8 @@ public class SellerLoginServlet extends HttpServlet {
             if (user != null) {
                 RequestDispatcher rd = req.getRequestDispatcher("SellerHome.html");
                 rd.include(req, res);
-                pw.println("    <div id=\"topmid\"><h1>Welcome to Online <br>Book Store</h1></div>\r\n"
-                        + "    <br>\r\n"
-                        + "    <table class=\"tab\">\r\n"
-                        + "        <tr>\r\n"
-                        + "            <td><p>Welcome " + user.getFirstName() + ", Happy Learning !!</p></td>\r\n"
-                        + "        </tr>\r\n"
-                        + "    </table>");
+                pw.println("<div id=\"topmid\"><h1>Welcome to Online <br>Book Store</h1></div>");
+                pw.println("<br><table class=\"tab\"><tr><td><p>Welcome " + user.getFirstName() + ", Happy Learning !!</p></td></tr></table>");
             } else {
                 RequestDispatcher rd = req.getRequestDispatcher("SellerLogin.html");
                 rd.include(req, res);
@@ -49,7 +44,12 @@ public class SellerLoginServlet extends HttpServlet {
 
         } catch (IOException e) {
             e.printStackTrace();
-            res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to write response");
+            try {
+                res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to write response");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
