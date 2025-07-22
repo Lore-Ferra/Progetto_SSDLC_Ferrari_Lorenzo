@@ -17,10 +17,12 @@ public class LogoutServlet extends HttpServlet {
 
     UserService authService = new UserServiceImpl();
 
+    @Override
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-        PrintWriter pw = res.getWriter();
         res.setContentType(BookStoreConstants.CONTENT_TYPE_TEXT_HTML);
+        
         try {
+            PrintWriter pw = res.getWriter();
 
             boolean logout = authService.logout(req.getSession());
 
@@ -31,9 +33,13 @@ public class LogoutServlet extends HttpServlet {
                 pw.println("<table class=\"tab\"><tr><td>Successfully logged out!</td></tr></table>");
             }
 
+        } catch (IOException e) {
+            System.err.println("Errore durante l'ottenimento del PrintWriter: " + e.getMessage());
+            e.printStackTrace();
+            res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore nel logout");
         } catch (Exception e) {
             e.printStackTrace();
+            res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore generico nel logout");
         }
     }
-
 }
