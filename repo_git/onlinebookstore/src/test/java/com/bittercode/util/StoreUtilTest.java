@@ -1,7 +1,6 @@
-package com.bittercode.service.util;
+package com.bittercode.util;
 
 import com.bittercode.model.UserRole;
-import com.bittercode.util.StoreUtil;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
