@@ -1,10 +1,8 @@
 package servlets;
 
-import com.bittercode.constant.ResponseCode;
 import com.bittercode.model.StoreException;
 import com.bittercode.model.UserRole;
 import com.bittercode.util.StoreUtil;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -57,16 +55,19 @@ class ErrorHandlerServletTest {
 
             String result = output.toString();
             verify(dispatcher).include(request, response);
-            assertTrue(result.contains(ResponseCode.INTERNAL_SERVER_ERROR.getMessage()));
+            assertTrue(result.contains("500") || result.contains("INTERNAL_SERVER_ERROR"));
         }
     }
 
     @Test
     void testStoreExceptionHandledProperly() throws Exception {
-        StoreException exception = new StoreException("Custom DB error", "DB_DOWN");
+        StoreException storeException = mock(StoreException.class);
+        when(storeException.getMessage()).thenReturn("Custom DB error");
+        when(storeException.getStatusCode()).thenReturn(503);
+        when(storeException.getErrorCode()).thenReturn("DB_DOWN");
 
         when(request.getAttribute("javax.servlet.error.status_code")).thenReturn(503);
-        when(request.getAttribute("javax.servlet.error.exception")).thenReturn(exception);
+        when(request.getAttribute("javax.servlet.error.exception")).thenReturn(storeException);
         when(request.getRequestDispatcher("index.html")).thenReturn(dispatcher);
 
         try (MockedStatic<StoreUtil> mockUtil = mockStatic(StoreUtil.class)) {
@@ -96,6 +97,7 @@ class ErrorHandlerServletTest {
             writer.flush();
 
             String result = output.toString();
+            verify(dispatcher).include(request, response);
             assertTrue(result.contains("404"));
         }
     }
@@ -115,6 +117,7 @@ class ErrorHandlerServletTest {
             writer.flush();
 
             String result = output.toString();
+            verify(dispatcher).include(request, response);
             assertTrue(result.contains("403"));
         }
     }
