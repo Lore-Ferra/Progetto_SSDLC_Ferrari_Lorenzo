@@ -61,9 +61,14 @@ public class SellerLoginServlet extends HttpServlet {
             } catch (IOException ex) {
                 LOGGER.log(Level.SEVERE, "IOException while sending error response", ex);
             }
-
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Unexpected exception during seller login", e);
+            try {
+                PrintWriter pw = res.getWriter();
+                pw.println("<div class=\"error\">Internal server error occurred. Please try again later.</div>");
+            } catch (IOException ex) {
+                LOGGER.log(Level.SEVERE, "IOException while sending error response", ex);
+            }
         }
     }
 }
