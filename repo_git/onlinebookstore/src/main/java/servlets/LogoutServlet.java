@@ -22,11 +22,11 @@ public class LogoutServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+
         res.setContentType(BookStoreConstants.CONTENT_TYPE_TEXT_HTML);
 
         try {
             PrintWriter pw = res.getWriter();
-
             boolean logout = authService.logout(req.getSession());
 
             RequestDispatcher rd = req.getRequestDispatcher("CustomerLogin.html");
@@ -39,19 +39,27 @@ public class LogoutServlet extends HttpServlet {
             }
 
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Errore durante il logout (IOException): " + e.getMessage(), e);
+            if (LOGGER.isLoggable(Level.SEVERE)) {
+                LOGGER.log(Level.SEVERE, "Errore durante il logout (IOException): " + e.getMessage(), e);
+            }
             try {
                 res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore nel logout");
             } catch (IOException sendErr) {
-                LOGGER.log(Level.SEVERE, "Errore durante sendError(): " + sendErr.getMessage(), sendErr);
+                if (LOGGER.isLoggable(Level.SEVERE)) {
+                    LOGGER.log(Level.SEVERE, "Errore durante sendError(): " + sendErr.getMessage(), sendErr);
+                }
             }
 
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Errore generico durante il logout: " + e.getMessage(), e);
+            if (LOGGER.isLoggable(Level.SEVERE)) {
+                LOGGER.log(Level.SEVERE, "Errore generico durante il logout: " + e.getMessage(), e);
+            }
             try {
                 res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore generico nel logout");
             } catch (IOException sendErr) {
-                LOGGER.log(Level.SEVERE, "Errore durante sendError(): " + sendErr.getMessage(), sendErr);
+                if (LOGGER.isLoggable(Level.SEVERE)) {
+                    LOGGER.log(Level.SEVERE, "Errore durante sendError(): " + sendErr.getMessage(), sendErr);
+                }
             }
         }
     }
