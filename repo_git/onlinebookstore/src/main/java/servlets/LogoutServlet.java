@@ -18,10 +18,10 @@ import com.bittercode.service.impl.UserServiceImpl;
 public class LogoutServlet extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(LogoutServlet.class.getName());
-    private UserService authService = new UserServiceImpl();
+    private final UserService authService;
 
     public LogoutServlet() {
-        this(new UserServiceImpl());
+        this.authService = new UserServiceImpl();
     }
 
     public LogoutServlet(UserService authService) {
