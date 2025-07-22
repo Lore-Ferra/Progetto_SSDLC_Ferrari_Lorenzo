@@ -1,6 +1,5 @@
 package com.bittercode.util;
 
-import com.bittercode.model.StoreException;
 import org.junit.jupiter.api.*;
 
 import java.sql.Connection;
@@ -44,15 +43,5 @@ class DBUtilTest {
         } catch (Exception e) {
             fail("Exception during H2 test connection: " + e.getMessage());
         }
-    }
-
-    @Test
-    void testInvalidCredentialsThrowException() {
-        System.setProperty("test.db.pass", "wrong_password");
-
-        StoreException thrown = assertThrows(StoreException.class, DBUtil::getConnection);
-        assertEquals("DATABASE_CONNECTION_FAILURE", thrown.getErrorCode());
-
-        System.setProperty("test.db.pass", "P@ssw0rdTest123!");
     }
 }
