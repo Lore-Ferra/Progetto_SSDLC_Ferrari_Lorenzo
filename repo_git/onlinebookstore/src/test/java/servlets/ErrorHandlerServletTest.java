@@ -63,7 +63,6 @@ class ErrorHandlerServletTest {
     void testStoreExceptionHandledProperly() throws Exception {
         StoreException storeException = mock(StoreException.class);
         when(storeException.getMessage()).thenReturn("Custom DB error");
-        when(storeException.getStatusCode()).thenReturn(503);
         when(storeException.getErrorCode()).thenReturn("DB_DOWN");
 
         when(request.getAttribute("javax.servlet.error.status_code")).thenReturn(503);
