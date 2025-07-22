@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
@@ -95,27 +96,32 @@ class CheckoutServletTest {
     }
 
     @Test
-    void testHandlesIOExceptionFromGetWriter() throws Exception {
+    void testHandlesIOExceptionFromGetWriter() {
         HttpServletResponse brokenResponse = mock(HttpServletResponse.class);
-        when(brokenResponse.getWriter()).thenThrow(new IOException("Simulated IO error"));
 
-        servlet.doPost(request, brokenResponse);
+        try {
+            when(brokenResponse.getWriter()).thenThrow(new IOException("Simulated IO error"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        assertDoesNotThrow(() -> servlet.doPost(request, brokenResponse));
     }
 
     @Test
-    void testHandlesServletExceptionDuringLoginRedirect() throws Exception {
+    void testHandlesServletExceptionDuringLoginRedirect() throws ServletException, IOException {
         when(request.getRequestDispatcher("CustomerLogin.html")).thenReturn(dispatcher);
 
         try (MockedStatic<StoreUtil> mockStatic = mockStatic(StoreUtil.class)) {
             mockStatic.when(() -> StoreUtil.isLoggedIn(UserRole.CUSTOMER, session)).thenReturn(false);
             doThrow(new ServletException("Boom")).when(dispatcher).include(request, response);
 
-            servlet.doPost(request, response);
+            assertDoesNotThrow(() -> servlet.doPost(request, response));
         }
     }
 
     @Test
-    void testHandlesExceptionDuringPaymentProcessing() throws Exception {
+    void testHandlesExceptionDuringPaymentProcessing() {
         when(request.getRequestDispatcher("payment.html")).thenReturn(dispatcher);
         when(session.getAttribute("amountToPay")).thenReturn("Boom");
 
@@ -123,7 +129,7 @@ class CheckoutServletTest {
             mockStatic.when(() -> StoreUtil.isLoggedIn(UserRole.CUSTOMER, session)).thenReturn(true);
             mockStatic.when(() -> StoreUtil.setActiveTab(printWriter, "cart")).thenThrow(new RuntimeException("Generic error"));
 
-            servlet.doPost(request, response);
+            assertDoesNotThrow(() -> servlet.doPost(request, response));
         }
     }
 }
