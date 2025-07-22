@@ -22,7 +22,15 @@ public class SellerLoginServlet extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(SellerLoginServlet.class.getName());
 
-    private final UserService userService = new UserServiceImpl();
+    private final UserService userService;
+
+    public SellerLoginServlet() {
+        this(new UserServiceImpl());
+    }
+
+    public SellerLoginServlet(UserService userService) {
+        this.userService = userService;
+    }
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
