@@ -18,33 +18,34 @@ import com.bittercode.util.StoreUtil;
 
 public class StoreBookServlet extends HttpServlet {
 
-    // book service for database operations and logics
-    BookService bookService = new BookServiceImpl();
+    private BookService bookService;
 
+    public StoreBookServlet() {
+        this(new BookServiceImpl());
+    }
+
+    public StoreBookServlet(BookService bookService) {
+        this.bookService = bookService;
+    }
+
+    @Override
     public void service(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         PrintWriter pw = res.getWriter();
         res.setContentType("text/html");
 
-        // Check if the customer is logged in, or else return to login page
         if (!StoreUtil.isLoggedIn(UserRole.SELLER, req.getSession())) {
             RequestDispatcher rd = req.getRequestDispatcher("SellerLogin.html");
             rd.include(req, res);
             pw.println("<table class=\"tab\"><tr><td>Please Login First to Continue!!</td></tr></table>");
             return;
         }
+
         try {
-
-            // Add/Remove Item from the cart if requested
-            // store the comma separated bookIds of cart in the session
-            // StoreUtil.updateCartItems(req);
-
             RequestDispatcher rd = req.getRequestDispatcher("SellerHome.html");
             rd.include(req, res);
             pw.println("<div class='container'>");
-            // Set the active tab as cart
             StoreUtil.setActiveTab(pw, "storebooks");
 
-            // Read the books from the database with the respective bookIds
             List<Book> books = bookService.getAllBooks();
             pw.println("<div id='topmid' style='background-color:grey'>Books Available In the Store</div>");
             pw.println("<table class=\"table table-hover\" style='background-color:white'>\r\n"
@@ -59,13 +60,15 @@ public class StoreBookServlet extends HttpServlet {
                     + "    </tr>\r\n"
                     + "  </thead>\r\n"
                     + "  <tbody>\r\n");
+
             if (books == null || books.isEmpty()) {
                 pw.println("    <tr style='background-color:green'>\r\n"
                         + "      <th scope=\"row\" colspan='6' style='color:yellow; text-align:center;'> No Books Available in the store </th>\r\n"
                         + "    </tr>\r\n");
-            }
-            for (Book book : books) {
-                pw.println(getRowData(book));
+            } else {
+                for (Book book : books) {
+                    pw.println(getRowData(book));
+                }
             }
 
             pw.println("  </tbody>\r\n"
@@ -82,14 +85,11 @@ public class StoreBookServlet extends HttpServlet {
                 + "      <td>" + book.getName() + "</td>\r\n"
                 + "      <td>" + book.getAuthor() + "</td>\r\n"
                 + "      <td><span>&#8377;</span> " + book.getPrice() + "</td>\r\n"
-                + "      <td>"
-                + book.getQuantity()
-                + "      </td>\r\n"
+                + "      <td>" + book.getQuantity() + "</td>\r\n"
                 + "      <td><form method='post' action='updatebook'>"
                 + "          <input type='hidden' name='bookId' value='" + book.getBarcode() + "'/>"
                 + "          <button type='submit' class=\"btn btn-success\">Update</button>"
-                + "          </form>"
+                + "          </form></td>\r\n"
                 + "    </tr>\r\n";
     }
-
 }

@@ -6,6 +6,7 @@ import com.bittercode.service.BookService;
 import com.bittercode.util.StoreUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -32,7 +33,7 @@ class StoreBookServletTest {
     @BeforeEach
     void setUp() throws IOException {
         mockBookService = mock(BookService.class);
-        servlet = new StoreBookServlet();
+        servlet = new StoreBookServlet(mockBookService);
 
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -46,51 +47,59 @@ class StoreBookServletTest {
 
     @Test
     void shouldRedirectIfNotLoggedIn() throws ServletException, IOException {
-        when(StoreUtil.isLoggedIn(UserRole.SELLER, session)).thenReturn(false);
-        when(request.getRequestDispatcher("SellerLogin.html")).thenReturn(dispatcher);
+        try (MockedStatic<StoreUtil> mockedUtil = mockStatic(StoreUtil.class)) {
+            mockedUtil.when(() -> StoreUtil.isLoggedIn(UserRole.SELLER, session)).thenReturn(false);
+            when(request.getRequestDispatcher("SellerLogin.html")).thenReturn(dispatcher);
 
-        servlet.service(request, response);
+            servlet.service(request, response);
 
-        verify(dispatcher).include(request, response);
-        assert outputWriter.toString().contains("Please Login First to Continue");
+            verify(dispatcher).include(request, response);
+            assert outputWriter.toString().contains("Please Login First to Continue");
+        }
     }
 
     @Test
     void shouldRenderEmptyBookListMessage() throws ServletException, IOException {
-        when(StoreUtil.isLoggedIn(UserRole.SELLER, session)).thenReturn(true);
-        when(mockBookService.getAllBooks()).thenReturn(Collections.emptyList());
-        when(request.getRequestDispatcher("SellerHome.html")).thenReturn(dispatcher);
+        try (MockedStatic<StoreUtil> mockedUtil = mockStatic(StoreUtil.class)) {
+            mockedUtil.when(() -> StoreUtil.isLoggedIn(UserRole.SELLER, session)).thenReturn(true);
+            when(mockBookService.getAllBooks()).thenReturn(Collections.emptyList());
+            when(request.getRequestDispatcher("SellerHome.html")).thenReturn(dispatcher);
 
-        servlet.service(request, response);
+            servlet.service(request, response);
 
-        verify(dispatcher).include(request, response);
-        assert outputWriter.toString().contains("No Books Available in the store");
+            verify(dispatcher).include(request, response);
+            assert outputWriter.toString().contains("No Books Available in the store");
+        }
     }
 
     @Test
     void shouldRenderListOfBooks() throws ServletException, IOException {
         Book book = new Book("123", "Test Book", "Author", 99.99, 5);
-        when(StoreUtil.isLoggedIn(UserRole.SELLER, session)).thenReturn(true);
-        when(mockBookService.getAllBooks()).thenReturn(Arrays.asList(book));
-        when(request.getRequestDispatcher("SellerHome.html")).thenReturn(dispatcher);
+        try (MockedStatic<StoreUtil> mockedUtil = mockStatic(StoreUtil.class)) {
+            mockedUtil.when(() -> StoreUtil.isLoggedIn(UserRole.SELLER, session)).thenReturn(true);
+            when(mockBookService.getAllBooks()).thenReturn(Arrays.asList(book));
+            when(request.getRequestDispatcher("SellerHome.html")).thenReturn(dispatcher);
 
-        servlet.service(request, response);
+            servlet.service(request, response);
 
-        String output = outputWriter.toString();
-        assert output.contains("Test Book");
-        assert output.contains("&#8377;");
-        assert output.contains("updatebook");
+            String output = outputWriter.toString();
+            assert output.contains("Test Book");
+            assert output.contains("&#8377;");
+            assert output.contains("updatebook");
+        }
     }
 
     @Test
     void shouldHandleExceptionGracefully() throws ServletException, IOException {
-        when(StoreUtil.isLoggedIn(UserRole.SELLER, session)).thenReturn(true);
-        when(mockBookService.getAllBooks()).thenThrow(new RuntimeException("DB error"));
-        when(request.getRequestDispatcher("SellerHome.html")).thenReturn(dispatcher);
+        try (MockedStatic<StoreUtil> mockedUtil = mockStatic(StoreUtil.class)) {
+            mockedUtil.when(() -> StoreUtil.isLoggedIn(UserRole.SELLER, session)).thenReturn(true);
+            when(mockBookService.getAllBooks()).thenThrow(new RuntimeException("DB error"));
+            when(request.getRequestDispatcher("SellerHome.html")).thenReturn(dispatcher);
 
-        servlet.service(request, response);
+            servlet.service(request, response);
 
-        String output = outputWriter.toString();
-        assert output.contains("Books Available In the Store");
+            String output = outputWriter.toString();
+            assert output.contains("Books Available In the Store");
+        }
     }
 }
