@@ -56,7 +56,7 @@ public class BookServiceImpl implements BookService {
                 book = new Book(bCode, bName, bAuthor, bPrice, bQty);
             }
         } catch (SQLException e) {
-
+            throw new StoreException("Error retrieving book by ID: " + bookId + ". Cause: " + e.getMessage());
         }
         return book;
     }
@@ -81,7 +81,7 @@ public class BookServiceImpl implements BookService {
                 books.add(book);
             }
         } catch (SQLException e) {
-
+            throw new StoreException("Error retrieving all books: " + e.getMessage());
         }
         return books;
     }
@@ -165,7 +165,7 @@ public class BookServiceImpl implements BookService {
                 books.add(book);
             }
         } catch (SQLException e) {
-
+            throw new StoreException("Error retrieving books by IDs: " + commaSeperatedBookIds + ". Cause: " + e.getMessage());
         }
         return books;
     }
