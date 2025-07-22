@@ -9,6 +9,10 @@ import com.bittercode.model.StoreException;
 
 public class DBUtil {
 
+    private DBUtil() {
+        // Prevent instantiation
+    }
+
     public static Connection getConnection() throws StoreException {
         try {
             if (isTestEnvironment()) {
