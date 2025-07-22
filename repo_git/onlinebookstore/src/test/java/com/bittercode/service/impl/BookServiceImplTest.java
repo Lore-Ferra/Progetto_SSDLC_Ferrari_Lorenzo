@@ -66,10 +66,7 @@ class BookServiceImplTest {
     void testGetAllBooksSQLException() throws Exception {
         when(mockConnection.prepareStatement(anyString())).thenThrow(new SQLException("Mock SQL Error"));
 
-        List<Book> books = bookService.getAllBooks();
-
-        assertNotNull(books);
-        assertEquals(0, books.size());
+        assertThrows(StoreException.class, () -> bookService.getAllBooks());
     }
 
     @Test
@@ -173,9 +170,7 @@ class BookServiceImplTest {
     void testGetBookByIdReturnsNullOnSQLException() throws Exception {
         when(mockConnection.prepareStatement(anyString())).thenThrow(new SQLException("Error"));
 
-        Book book = bookService.getBookById("001");
-
-        assertNull(book);
+        assertThrows(StoreException.class, () -> bookService.getBookById("001"));
     }
 
     @Test
@@ -199,9 +194,6 @@ class BookServiceImplTest {
     void testGetBooksByCommaSeparatedBookIdsSQLException() throws Exception {
         when(mockConnection.prepareStatement(anyString())).thenThrow(new SQLException("Error"));
 
-        List<Book> books = bookService.getBooksByCommaSeperatedBookIds("'001','002'");
-
-        assertNotNull(books);
-        assertEquals(0, books.size());
+        assertThrows(StoreException.class, () -> bookService.getBooksByCommaSeperatedBookIds("'001','002'"));
     }
 }
