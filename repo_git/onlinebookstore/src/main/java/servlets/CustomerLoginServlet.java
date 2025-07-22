@@ -2,6 +2,7 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -17,7 +18,8 @@ import com.bittercode.service.impl.UserServiceImpl;
 
 public class CustomerLoginServlet extends HttpServlet {
 
-    UserService authService = new UserServiceImpl();
+    private static final Logger logger = Logger.getLogger(CustomerLoginServlet.class.getName());
+    private final UserService authService = new UserServiceImpl();
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
@@ -25,7 +27,7 @@ public class CustomerLoginServlet extends HttpServlet {
         try {
             pw = res.getWriter();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.severe("Failed to obtain response writer: " + e.getMessage());
             return;
         }
 
@@ -38,40 +40,33 @@ public class CustomerLoginServlet extends HttpServlet {
         try {
             user = authService.login(UserRole.CUSTOMER, uName, pWord, req.getSession());
         } catch (StoreException e) {
-        e.printStackTrace();
-
-        try {
-            RequestDispatcher rd = req.getRequestDispatcher("CustomerLogin.html");
-            rd.include(req, res);
-            pw.println("<table class=\"tab\"><tr><td>Internal error occurred. Please try again later.</td></tr></table>");
-        } catch (ServletException | IOException ex) {
-            ex.printStackTrace();
+            logger.severe("StoreException during login: " + e.getMessage());
+            try {
+                RequestDispatcher rd = req.getRequestDispatcher("CustomerLogin.html");
+                rd.include(req, res);
+                pw.println("<table class=\"tab\"><tr><td>Internal error occurred. Please try again later.</td></tr></table>");
+            } catch (ServletException | IOException ex) {
+                logger.severe("Error including login page after StoreException: " + ex.getMessage());
+            }
+            return;
         }
-        return;
-    }
 
         try {
             if (user != null) {
                 RequestDispatcher rd = req.getRequestDispatcher("CustomerHome.html");
                 rd.include(req, res);
-                pw.println("    <div id=\"topmid\"><h1>Welcome to Online <br>Book Store</h1></div>\r\n"
-                        + "    <br>\r\n"
-                        + "    <table class=\"tab\">\r\n"
-                        + "        <tr>\r\n"
-                        + "            <td><p>Welcome " + user.getFirstName() + ", Happy Learning !!</p></td>\r\n"
-                        + "        </tr>\r\n"
-                        + "    </table>");
-
+                pw.println("<div id=\"topmid\"><h1>Welcome to Online <br>Book Store</h1></div>");
+                pw.println("<br>");
+                pw.println("<table class=\"tab\">");
+                pw.println("<tr><td><p>Welcome " + user.getFirstName() + ", Happy Learning !!</p></td></tr>");
+                pw.println("</table>");
             } else {
-
                 RequestDispatcher rd = req.getRequestDispatcher("CustomerLogin.html");
                 rd.include(req, res);
                 pw.println("<table class=\"tab\"><tr><td>Incorrect UserName or PassWord</td></tr></table>");
             }
-
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe("Unexpected error while handling login response: " + e.getMessage());
         }
     }
-
 }
