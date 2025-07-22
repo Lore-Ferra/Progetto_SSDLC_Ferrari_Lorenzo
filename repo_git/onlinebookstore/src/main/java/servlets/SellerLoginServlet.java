@@ -2,6 +2,8 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -18,7 +20,9 @@ import com.bittercode.service.impl.UserServiceImpl;
 
 public class SellerLoginServlet extends HttpServlet {
 
-    UserService userService = new UserServiceImpl();
+    private static final Logger LOGGER = Logger.getLogger(SellerLoginServlet.class.getName());
+
+    private final UserService userService = new UserServiceImpl();
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
@@ -43,15 +47,15 @@ public class SellerLoginServlet extends HttpServlet {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "IOException while writing response", e);
             try {
                 res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to write response");
             } catch (IOException ex) {
-                ex.printStackTrace();
+                LOGGER.log(Level.SEVERE, "IOException while sending error response", ex);
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected exception during seller login", e);
         }
     }
 }
