@@ -18,6 +18,7 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collections;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 class StoreBookServletTest {
@@ -83,9 +84,9 @@ class StoreBookServletTest {
             servlet.service(request, response);
 
             String output = outputWriter.toString();
-            assert output.contains("Test Book");
-            assert output.contains("&#8377;");
-            assert output.contains("updatebook");
+            assertTrue(output.contains("Test Book"), "Output should contain the book name");
+            assertTrue(output.contains("&#8377;"), "Output should contain currency symbol");
+            assertTrue(output.contains("updatebook"), "Output should contain update action form");
         }
     }
 
@@ -99,7 +100,8 @@ class StoreBookServletTest {
             servlet.service(request, response);
 
             String output = outputWriter.toString();
-            assert output.contains("Books Available In the Store");
+            assertTrue(output.contains("Books Available In the Store"), "Should show fallback heading even on error");
+            assertTrue(output.contains("Could not load books due to an internal error."), "Should show error row in table");
         }
     }
 }
