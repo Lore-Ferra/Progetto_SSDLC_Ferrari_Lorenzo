@@ -59,7 +59,7 @@ public class StoreBookServlet extends HttpServlet {
                     + "    </tr>\r\n"
                     + "  </thead>\r\n"
                     + "  <tbody>\r\n");
-            if (books == null || books.size() == 0) {
+            if (books == null || books.isEmpty()) {
                 pw.println("    <tr style='background-color:green'>\r\n"
                         + "      <th scope=\"row\" colspan='6' style='color:yellow; text-align:center;'> No Books Available in the store </th>\r\n"
                         + "    </tr>\r\n");
