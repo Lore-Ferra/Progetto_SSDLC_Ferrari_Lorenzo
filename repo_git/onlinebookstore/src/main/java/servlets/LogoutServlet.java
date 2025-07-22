@@ -18,7 +18,15 @@ import com.bittercode.service.impl.UserServiceImpl;
 public class LogoutServlet extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(LogoutServlet.class.getName());
-    private final UserService authService = new UserServiceImpl();
+    private UserService authService = new UserServiceImpl();
+
+    public LogoutServlet() {
+        this(new UserServiceImpl());
+    }
+
+    public LogoutServlet(UserService authService) {
+        this.authService = authService;
+    }
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {

@@ -1,6 +1,6 @@
 package servlets;
 
-import com.bittercode.service.UserService;
+import com.bittercode.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
@@ -43,7 +43,7 @@ class LogoutServletTest {
 
     @Test
     void testSuccessfulLogout() throws Exception {
-        try (MockedConstruction<UserService> mock = mockConstruction(UserService.class,
+        try (MockedConstruction<UserServiceImpl> mock = mockConstruction(UserServiceImpl.class,
                 (mocked, context) -> when(mocked.logout(session)).thenReturn(true))) {
 
             servlet.doGet(request, response);
@@ -57,7 +57,7 @@ class LogoutServletTest {
 
     @Test
     void testLogoutReturnsFalse() throws Exception {
-        try (MockedConstruction<UserService> mock = mockConstruction(UserService.class,
+        try (MockedConstruction<UserServiceImpl> mock = mockConstruction(UserServiceImpl.class,
                 (mocked, context) -> when(mocked.logout(session)).thenReturn(false))) {
 
             servlet.doGet(request, response);
@@ -70,8 +70,8 @@ class LogoutServletTest {
     }
 
     @Test
-    void testIOExceptionHandling() throws Exception {
-        when(response.getWriter()).thenThrow(new IOException("Writer error"));
+    void testIOExceptionDuringGetWriter() throws Exception {
+        when(response.getWriter()).thenThrow(new IOException("Writer failure"));
 
         servlet.doGet(request, response);
 
@@ -79,8 +79,8 @@ class LogoutServletTest {
     }
 
     @Test
-    void testGenericExceptionHandling() throws Exception {
-        try (MockedConstruction<UserService> mock = mockConstruction(UserService.class,
+    void testGenericExceptionDuringLogout() throws Exception {
+        try (MockedConstruction<UserServiceImpl> mock = mockConstruction(UserServiceImpl.class,
                 (mocked, context) -> when(mocked.logout(session)).thenThrow(new RuntimeException("Boom")))) {
 
             servlet.doGet(request, response);
