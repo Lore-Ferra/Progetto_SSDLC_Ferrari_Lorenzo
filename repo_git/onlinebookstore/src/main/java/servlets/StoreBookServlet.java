@@ -80,6 +80,7 @@ public class StoreBookServlet extends HttpServlet {
             pw.println("<table class=\"table table-hover\" style='background-color:white'>");
             pw.println("    <tr><td colspan='6'>Could not load books due to an internal error.</td></tr>");
             pw.println("</table>");
+            pw.println("</div>");
         }
     }
 
