@@ -1,11 +1,11 @@
 package servlets;
 
-import com.bittercode.service.impl.UserServiceImpl;
+import com.bittercode.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedConstruction;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
 import java.io.IOException;
@@ -24,10 +24,13 @@ class LogoutServletTest {
     private RequestDispatcher dispatcher;
     private StringWriter stringWriter;
     private PrintWriter writer;
+    private UserService mockUserService;
 
     @BeforeEach
     void setUp() throws IOException {
-        servlet = new LogoutServlet();
+        mockUserService = mock(UserService.class);
+        servlet = new LogoutServlet(mockUserService); // ✅ INIETTA IL MOCK
+
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         session = mock(HttpSession.class);
@@ -42,31 +45,25 @@ class LogoutServletTest {
     }
 
     @Test
-    void testSuccessfulLogout() throws Exception {
-        try (MockedConstruction<UserServiceImpl> mock = mockConstruction(UserServiceImpl.class,
-                (mocked, context) -> when(mocked.logout(session)).thenReturn(true))) {
+    void testLogoutSuccessful() throws ServletException, IOException {
+        when(mockUserService.logout(session)).thenReturn(true);
 
-            servlet.doGet(request, response);
+        servlet.doGet(request, response);
 
-            verify(dispatcher).include(request, response);
-            writer.flush();
-            String result = stringWriter.toString();
-            assertTrue(result.contains("Successfully logged out!"));
-        }
+        verify(mockUserService).logout(session);
+        verify(dispatcher).include(request, response);
+        assertTrue(stringWriter.toString().contains("Successfully logged out!"));
     }
 
     @Test
-    void testLogoutReturnsFalse() throws Exception {
-        try (MockedConstruction<UserServiceImpl> mock = mockConstruction(UserServiceImpl.class,
-                (mocked, context) -> when(mocked.logout(session)).thenReturn(false))) {
+    void testLogoutReturnsFalse() throws ServletException, IOException {
+        when(mockUserService.logout(session)).thenReturn(false);
 
-            servlet.doGet(request, response);
+        servlet.doGet(request, response);
 
-            verify(dispatcher).include(request, response);
-            writer.flush();
-            String result = stringWriter.toString();
-            assertFalse(result.contains("Successfully logged out!"));
-        }
+        verify(mockUserService).logout(session);
+        verify(dispatcher).include(request, response);
+        assertFalse(stringWriter.toString().contains("Successfully logged out!"));
     }
 
     @Test
@@ -80,12 +77,10 @@ class LogoutServletTest {
 
     @Test
     void testGenericExceptionDuringLogout() throws Exception {
-        try (MockedConstruction<UserServiceImpl> mock = mockConstruction(UserServiceImpl.class,
-                (mocked, context) -> when(mocked.logout(session)).thenThrow(new RuntimeException("Boom")))) {
+        when(mockUserService.logout(session)).thenThrow(new RuntimeException("Boom"));
 
-            servlet.doGet(request, response);
+        servlet.doGet(request, response);
 
-            verify(response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore generico nel logout");
-        }
+        verify(response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore generico nel logout");
     }
 }
