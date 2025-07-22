@@ -12,6 +12,10 @@ import com.bittercode.model.UserRole;
  */
 public class StoreUtil {
 
+    private StoreUtil() {
+        // Prevent instantiation
+    }
+
     /**
      * Check if the User is logged in with the requested role
      */
