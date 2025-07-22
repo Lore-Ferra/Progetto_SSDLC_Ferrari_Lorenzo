@@ -12,7 +12,9 @@ public class DBUtil {
     public static Connection getConnection() throws StoreException {
         try {
             if (isTestEnvironment()) {
-                return DriverManager.getConnection("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1", "sa", "password");
+                String user = System.getProperty("test.db.user", "sa");
+                String pass = System.getProperty("test.db.pass", "P@ssw0rdTest123!");
+                return DriverManager.getConnection("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1", user, pass);
             } else {
                 Class.forName(DatabaseConfig.DRIVER_NAME);
                 return DriverManager.getConnection(
