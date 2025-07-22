@@ -18,7 +18,7 @@ import com.bittercode.util.StoreUtil;
 
 public class StoreBookServlet extends HttpServlet {
 
-    private BookService bookService;
+    private final BookService bookService;
 
     public StoreBookServlet() {
         this(new BookServiceImpl());
