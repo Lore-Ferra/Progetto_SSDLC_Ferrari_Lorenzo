@@ -39,12 +39,10 @@ public class ErrorHandlerServlet extends HttpServlet {
 
         if (throwable != null && throwable instanceof StoreException) {
             StoreException storeException = (StoreException) throwable;
-            if (storeException != null) {
                 errorMessage = storeException.getMessage();
                 statusCode = storeException.getStatusCode();
                 errorCode = storeException.getErrorCode();
                 storeException.printStackTrace();
-            }
         }
 
         System.out.println("======ERROR TRIGGERED========");
