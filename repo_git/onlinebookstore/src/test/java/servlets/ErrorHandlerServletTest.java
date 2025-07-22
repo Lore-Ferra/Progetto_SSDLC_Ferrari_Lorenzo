@@ -50,7 +50,7 @@ public class ErrorHandlerServletTest {
     void testCustomerViewError() throws Exception {
         try (MockedStatic<StoreUtil> mockUtil = mockStatic(StoreUtil.class)) {
             mockUtil.when(() -> StoreUtil.isLoggedIn(UserRole.CUSTOMER, session)).thenReturn(true);
-            mockUtil.when(() -> StoreUtil.setActiveTab(writer, "home")).thenReturn(null);
+            mockUtil.when(() -> StoreUtil.setActiveTab(any(), eq("home"))).then(inv -> null);
 
             when(request.getAttribute("javax.servlet.error.status_code")).thenReturn(404);
             when(request.getAttribute("javax.servlet.error.exception")).thenReturn(null);
@@ -68,7 +68,7 @@ public class ErrorHandlerServletTest {
         try (MockedStatic<StoreUtil> mockUtil = mockStatic(StoreUtil.class)) {
             mockUtil.when(() -> StoreUtil.isLoggedIn(UserRole.CUSTOMER, session)).thenReturn(false);
             mockUtil.when(() -> StoreUtil.isLoggedIn(UserRole.SELLER, session)).thenReturn(true);
-            mockUtil.when(() -> StoreUtil.setActiveTab(writer, "home")).thenReturn(null);
+            mockUtil.when(() -> StoreUtil.setActiveTab(any(), eq("home"))).then(inv -> null);
 
             when(request.getAttribute("javax.servlet.error.status_code")).thenReturn(500);
             when(request.getAttribute("javax.servlet.error.exception")).thenReturn(null);
@@ -82,7 +82,7 @@ public class ErrorHandlerServletTest {
     }
 
     @Test
-    public void testGuestViewWithScriptInjection() throws Exception {
+    void testGuestViewWithScriptInjection() throws Exception {
         try (MockedStatic<StoreUtil> mockUtil = mockStatic(StoreUtil.class)) {
             mockUtil.when(() -> StoreUtil.isLoggedIn(UserRole.CUSTOMER, session)).thenReturn(false);
             mockUtil.when(() -> StoreUtil.isLoggedIn(UserRole.SELLER, session)).thenReturn(false);
@@ -100,7 +100,7 @@ public class ErrorHandlerServletTest {
     }
 
     @Test
-    public void testStoreExceptionHandledProperly() throws Exception {
+    void testStoreExceptionHandledProperly() throws Exception {
         try (MockedStatic<StoreUtil> mockUtil = mockStatic(StoreUtil.class)) {
             mockUtil.when(() -> StoreUtil.isLoggedIn(UserRole.CUSTOMER, session)).thenReturn(false);
             mockUtil.when(() -> StoreUtil.isLoggedIn(UserRole.SELLER, session)).thenReturn(false);
@@ -120,7 +120,7 @@ public class ErrorHandlerServletTest {
     }
 
     @Test
-    public void testGenericErrorWithoutException() throws Exception {
+    void testGenericErrorWithoutException() throws Exception {
         try (MockedStatic<StoreUtil> mockUtil = mockStatic(StoreUtil.class)) {
             mockUtil.when(() -> StoreUtil.isLoggedIn(UserRole.CUSTOMER, session)).thenReturn(false);
             mockUtil.when(() -> StoreUtil.isLoggedIn(UserRole.SELLER, session)).thenReturn(false);
