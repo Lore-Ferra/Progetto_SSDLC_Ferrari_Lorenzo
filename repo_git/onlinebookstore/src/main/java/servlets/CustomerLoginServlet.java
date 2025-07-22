@@ -38,12 +38,17 @@ public class CustomerLoginServlet extends HttpServlet {
         try {
             user = authService.login(UserRole.CUSTOMER, uName, pWord, req.getSession());
         } catch (StoreException e) {
-            e.printStackTrace();
+        e.printStackTrace();
+
+        try {
             RequestDispatcher rd = req.getRequestDispatcher("CustomerLogin.html");
             rd.include(req, res);
             pw.println("<table class=\"tab\"><tr><td>Internal error occurred. Please try again later.</td></tr></table>");
-            return;
+        } catch (ServletException | IOException ex) {
+            ex.printStackTrace();
         }
+        return;
+    }
 
         try {
             if (user != null) {
