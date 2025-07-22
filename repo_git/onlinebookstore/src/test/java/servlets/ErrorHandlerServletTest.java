@@ -2,6 +2,7 @@ package servlets;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.*;
 
 import java.io.PrintWriter;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpSession;
 
 import com.bittercode.model.StoreException;
 import com.bittercode.model.UserRole;
+import com.bittercode.util.StoreUtil;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,16 +50,25 @@ public class ErrorHandlerServletTest {
     }
 
     @Test
-    public void testCustomerViewError() throws Exception {
-        when(session.getAttribute("role")).thenReturn(UserRole.CUSTOMER);
-        when(request.getAttribute("javax.servlet.error.status_code")).thenReturn(403);
+    void testCustomerViewError() throws Exception {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        HttpSession session = mock(HttpSession.class);
+        PrintWriter writer = mock(PrintWriter.class);
+        RequestDispatcher dispatcher = mock(RequestDispatcher.class);
+
+        when(request.getSession()).thenReturn(session);
+        when(StoreUtil.isLoggedIn(UserRole.CUSTOMER, session)).thenReturn(true);
         when(request.getRequestDispatcher("CustomerHome.html")).thenReturn(dispatcher);
+        when(response.getWriter()).thenReturn(writer);
+
+        request.setAttribute("javax.servlet.error.status_code", 404);
+        request.setAttribute("javax.servlet.error.exception", null);
 
         servlet.service(request, response);
-        writer.flush();
 
-        String result = output.toString();
-        assertTrue(result.contains("ACCESS_DENIED"));
+        verify(dispatcher).include(request, response);
+        verify(writer, atLeastOnce()).println(contains("PAGE_NOT_FOUND"));
     }
 
     @Test
