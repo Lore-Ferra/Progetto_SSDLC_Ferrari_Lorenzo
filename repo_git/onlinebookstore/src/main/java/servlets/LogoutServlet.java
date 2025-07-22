@@ -2,6 +2,8 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -15,12 +17,13 @@ import com.bittercode.service.impl.UserServiceImpl;
 
 public class LogoutServlet extends HttpServlet {
 
-    UserService authService = new UserServiceImpl();
+    private static final Logger LOGGER = Logger.getLogger(LogoutServlet.class.getName());
+    private final UserService authService = new UserServiceImpl();
 
     @Override
-    public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+    public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         res.setContentType(BookStoreConstants.CONTENT_TYPE_TEXT_HTML);
-        
+
         try {
             PrintWriter pw = res.getWriter();
 
@@ -28,18 +31,28 @@ public class LogoutServlet extends HttpServlet {
 
             RequestDispatcher rd = req.getRequestDispatcher("CustomerLogin.html");
             rd.include(req, res);
-//            StoreUtil.setActiveTab(pw, "logout");
+
+            // StoreUtil.setActiveTab(pw, "logout");
+
             if (logout) {
                 pw.println("<table class=\"tab\"><tr><td>Successfully logged out!</td></tr></table>");
             }
 
         } catch (IOException e) {
-            System.err.println("Errore durante l'ottenimento del PrintWriter: " + e.getMessage());
-            e.printStackTrace();
-            res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore nel logout");
+            LOGGER.log(Level.SEVERE, "Errore durante il logout (IOException): " + e.getMessage(), e);
+            try {
+                res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore nel logout");
+            } catch (IOException sendErr) {
+                LOGGER.log(Level.SEVERE, "Errore durante sendError(): " + sendErr.getMessage(), sendErr);
+            }
+
         } catch (Exception e) {
-            e.printStackTrace();
-            res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore generico nel logout");
+            LOGGER.log(Level.SEVERE, "Errore generico durante il logout: " + e.getMessage(), e);
+            try {
+                res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore generico nel logout");
+            } catch (IOException sendErr) {
+                LOGGER.log(Level.SEVERE, "Errore durante sendError(): " + sendErr.getMessage(), sendErr);
+            }
         }
     }
 }
