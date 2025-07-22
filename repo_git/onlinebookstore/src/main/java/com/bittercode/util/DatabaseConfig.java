@@ -6,6 +6,10 @@ import java.util.Properties;
 
 class DatabaseConfig {
 
+    private DatabaseConfig() {
+        // Prevent instantiation
+    }
+
     static Properties prop = new Properties();
     static {
 
