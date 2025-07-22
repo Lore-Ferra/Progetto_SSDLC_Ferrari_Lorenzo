@@ -55,7 +55,8 @@ class ErrorHandlerServletTest {
 
             String result = output.toString();
             verify(dispatcher).include(request, response);
-            assertTrue(result.contains("500") || result.contains("INTERNAL_SERVER_ERROR"));
+            assertTrue(result.contains("INTERNAL_SERVER_ERROR (500)"));
+            assertTrue(result.contains("Internal Server Error"));
         }
     }
 
@@ -64,6 +65,7 @@ class ErrorHandlerServletTest {
         StoreException storeException = mock(StoreException.class);
         when(storeException.getMessage()).thenReturn("Custom DB error");
         when(storeException.getErrorCode()).thenReturn("DB_DOWN");
+        when(storeException.getStatusCode()).thenReturn(503);
 
         when(request.getAttribute("javax.servlet.error.status_code")).thenReturn(503);
         when(request.getAttribute("javax.servlet.error.exception")).thenReturn(storeException);
@@ -77,8 +79,8 @@ class ErrorHandlerServletTest {
             writer.flush();
 
             String result = output.toString();
+            assertTrue(result.contains("DB_DOWN (503)"));
             assertTrue(result.contains("Custom DB error"));
-            assertTrue(result.contains("DB_DOWN"));
         }
     }
 
@@ -97,7 +99,8 @@ class ErrorHandlerServletTest {
 
             String result = output.toString();
             verify(dispatcher).include(request, response);
-            assertTrue(result.contains("404"));
+            assertTrue(result.contains("PAGE_NOT_FOUND (404)"));
+            assertTrue(result.contains("The Page You are Searching For is Not available"));
         }
     }
 
@@ -117,7 +120,8 @@ class ErrorHandlerServletTest {
 
             String result = output.toString();
             verify(dispatcher).include(request, response);
-            assertTrue(result.contains("403"));
+            assertTrue(result.contains("ACCESS_DENIED (403)"));
+            assertTrue(result.contains("Please Login First to continue"));
         }
     }
 
@@ -135,8 +139,9 @@ class ErrorHandlerServletTest {
             writer.flush();
 
             String result = output.toString();
+            assertTrue(result.contains("BAD_REQUEST (400)"));
+            assertTrue(result.contains("Bad Request, Please Try Again"));
             assertTrue(result.contains("document.getElementById('topmid').innerHTML='';"));
-            assertTrue(result.contains("400"));
         }
     }
 }
