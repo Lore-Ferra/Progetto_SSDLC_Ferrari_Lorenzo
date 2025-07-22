@@ -1,4 +1,6 @@
-<html>
+<!DOCTYPE html>
+<html lang="en" xml:lang="en">
+
 <head>
 <meta charset="ISO-8859-1">
 <title>Book Store</title>
@@ -37,6 +39,7 @@
 }
 </style>
 </head>
+
 <body onload="funload()">
 	<header>
 		<nav class="navbar navbar-expand-sm bg-dark">
@@ -65,25 +68,29 @@
 
 	<form action="adminlog" method="post">
 		<table class="tab" style="width:40%">
-			<tr style="color:brown; padding-left:35%">
-				<td>Admin LOGIN</td>
-			</tr>
-			<tr><td><a href="CustomerLogin.html" style="color:blue; font-size:medium; ">Not an Admin?, Click Here to Login as Customer</a></td></tr>
-			<tr>
-				<td>
-					<label for="userName">Username : </label> 
-					<input type="text"
-						name="username" id="userName" placeholder="Enter your Username"><br />
-					<br /> 
-				
-					<label for="Password">Password : </label>
-					<input
-						type="password" name="password" placeholder="Enter Password"
-						id="Password"><br /> <br /> 
-					<input class="AdminLogin"
-						type="submit" value=" Login as an Admin  ">
-				</td>
-			</tr>
+			<thead>
+				<tr style="color:brown;">
+					<th colspan="2">Admin LOGIN</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr><td><a href="CustomerLogin.html" style="color:blue; font-size:medium; ">Not an Admin?, Click Here to Login as Customer</a></td></tr>
+				<tr>
+					<td>
+						<label for="userName">Username : </label> 
+						<input type="text"
+							name="username" id="userName" placeholder="Enter your Username"><br />
+						<br /> 
+					
+						<label for="Password">Password : </label>
+						<input
+							type="password" name="password" placeholder="Enter Password"
+							id="Password"><br /> <br /> 
+						<input class="AdminLogin"
+							type="submit" value=" Login as an Admin  ">
+					</td>
+				</tr>
+				</tbody>
 		</table>
 	</form>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" ></script>
