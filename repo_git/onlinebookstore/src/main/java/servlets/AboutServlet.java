@@ -14,6 +14,7 @@ import com.bittercode.util.StoreUtil;
 //Http Servlet extended class for showing the about information
 public class AboutServlet extends HttpServlet {
 
+    @Override
     public void service(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         PrintWriter pw = res.getWriter();
         res.setContentType("text/html");
