@@ -19,7 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
-public class ErrorHandlerServletTest {
+class ErrorHandlerServletTest {
 
     private ErrorHandlerServlet servlet;
     private HttpServletRequest request;
