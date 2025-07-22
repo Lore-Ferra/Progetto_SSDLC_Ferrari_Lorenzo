@@ -22,7 +22,7 @@ class DatabaseConfigTest {
 
     @Test
     void testConnectionStringIsComposedCorrectly() {
-        String expected = "jdbc:h2:mem:1234/testdb";
-        assertEquals(expected, DatabaseConfig.CONNECTION_STRING);
+        String actual = DatabaseConfig.CONNECTION_STRING;
+        assertEquals("jdbc:h2:mem:1234/testdb", actual);
     }
 }
