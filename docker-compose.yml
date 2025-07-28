@@ -28,7 +28,7 @@ services:
       - cicd
 
   db:
-    image: postgres:latest
+    image: postgres:13
     container_name: sonar-db
     environment:
       - POSTGRES_USER=sonar
