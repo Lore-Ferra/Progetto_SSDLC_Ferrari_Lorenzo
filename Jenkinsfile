@@ -30,9 +30,11 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 dir('repo_git/onlinebookstore') {
-                    withSonarQubeEnv("${env.SONARQUBE_ENV}") {
-                        sh 'mvn sonar:sonar'
-                        sh 'cat target/sonar/report-task.txt || true'
+                    withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
+                        withSonarQubeEnv("${env.SONARQUBE_ENV}") {
+                            sh 'mvn sonar:sonar -Dsonar.token=$SONAR_TOKEN'
+                            sh 'cat target/sonar/report-task.txt || true'
+                        }
                     }
                 }
             }
