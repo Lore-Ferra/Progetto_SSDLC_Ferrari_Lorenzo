@@ -19,8 +19,9 @@ import com.bittercode.service.impl.BookServiceImpl;
 import com.bittercode.util.StoreUtil;
 
 public class AddBookServlet extends HttpServlet {
-    BookService bookService = new BookServiceImpl();
+    private static final BookService bookService = new BookServiceImpl();
 
+    @Override
     public void service(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         PrintWriter pw = res.getWriter();
         res.setContentType(BookStoreConstants.CONTENT_TYPE_TEXT_HTML);
@@ -38,7 +39,6 @@ public class AddBookServlet extends HttpServlet {
         StoreUtil.setActiveTab(pw, "addbook");
         pw.println("<div class='container my-2'>");
         if(bName == null || bName.isBlank()) {
-            //render the add book form;
             showAddBookForm(pw);
             return;
         } //else process the add book
@@ -48,7 +48,7 @@ public class AddBookServlet extends HttpServlet {
             String uniqueID = UUID.randomUUID().toString();
             String bCode = uniqueID;
             String bAuthor = req.getParameter(BooksDBConstants.COLUMN_AUTHOR);
-            double bPrice = Integer.parseInt(req.getParameter(BooksDBConstants.COLUMN_PRICE));
+            double bPrice = Double.parseDouble(req.getParameter(BooksDBConstants.COLUMN_PRICE));
             int bQty = Integer.parseInt(req.getParameter(BooksDBConstants.COLUMN_QUANTITY));
 
             Book book = new Book(bCode, bName, bAuthor, bPrice, bQty);
@@ -58,7 +58,6 @@ public class AddBookServlet extends HttpServlet {
                         "<table class=\"tab\"><tr><td>Book Detail Updated Successfully!<br/>Add More Books</td></tr></table>");
             } else {
                 pw.println("<table class=\"tab\"><tr><td>Failed to Add Books! Fill up CareFully</td></tr></table>");
-                //rd.include(req, res);
             }
         } catch (Exception e) {
             e.printStackTrace();
