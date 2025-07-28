@@ -1,7 +1,6 @@
 # Progetto SSDLC - Secure Software Development Life Cycle
 
-Autore: Lorenzo Ferrari  
-Progetto Universitario  
+Lorenzo Ferrari
 Repository: [Progetto SSDLC](https://github.com/Lore-Ferra/Progetto_SSDLC_Ferrari_Lorenzo)  
 Progetto base: [onlinebookstore (Java)](https://github.com/shashirajraja/onlinebookstore)
 
