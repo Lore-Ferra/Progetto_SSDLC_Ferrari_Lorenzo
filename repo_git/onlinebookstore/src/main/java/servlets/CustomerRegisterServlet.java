@@ -19,8 +19,13 @@ import com.bittercode.service.impl.UserServiceImpl;
 
 public class CustomerRegisterServlet extends HttpServlet {
 
-    UserService userService = new UserServiceImpl();
+    private static UserService userService = new UserServiceImpl();
 
+    public static void setUserService(UserService service) {
+        userService = service;
+    }
+
+    @Override
     public void service(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         PrintWriter pw = res.getWriter();
         res.setContentType(BookStoreConstants.CONTENT_TYPE_TEXT_HTML);
