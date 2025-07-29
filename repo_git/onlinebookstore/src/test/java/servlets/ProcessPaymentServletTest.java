@@ -88,7 +88,7 @@ class ProcessPaymentServletTest {
             assertTrue(output.contains("X Dev"));
             assertTrue(output.contains("ORDABC123TM"));
 
-            verify(bookService).updateBookQtyById(eq("ABC123"), 8);
+            verify(bookService).updateBookQtyById("ABC123", 8);
 
             verify(session).removeAttribute("qty_ABC123");
             verify(session).removeAttribute("amountToPay");
