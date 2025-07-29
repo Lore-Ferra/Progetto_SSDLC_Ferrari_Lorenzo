@@ -21,8 +21,13 @@ import com.bittercode.util.StoreUtil;
 
 public class ProcessPaymentServlet extends HttpServlet {
 
-    BookService bookService = new BookServiceImpl();
+    private static BookService bookService = new BookServiceImpl();
 
+    public static void setBookService(BookService service) {
+        bookService = service;
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public void service(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         PrintWriter pw = res.getWriter();
@@ -55,7 +60,7 @@ public class ProcessPaymentServlet extends HttpServlet {
                 int qtToBuy = cart.getQuantity();
                 availableQty = availableQty - qtToBuy;
                 bookService.updateBookQtyById(bCode, availableQty);
-                pw.println(this.addBookToCard(bCode, bName, bAuthor, bPrice, availableQty));
+                pw.println(this.addBookToCard(bCode, bName, bAuthor, bPrice));
                 session.removeAttribute("qty_" + bCode);
             }
             session.removeAttribute("amountToPay");
@@ -69,7 +74,7 @@ public class ProcessPaymentServlet extends HttpServlet {
         }
     }
 
-    public String addBookToCard(String bCode, String bName, String bAuthor, double bPrice, int bQty) {
+    public String addBookToCard(String bCode, String bName, String bAuthor, double bPrice) {
         String button = "<a href=\"#\" class=\"btn btn-info\">Order Placed</a>\r\n";
         return "<div class=\"card\">\r\n"
                 + "                <div class=\"row card-body\">\r\n"
