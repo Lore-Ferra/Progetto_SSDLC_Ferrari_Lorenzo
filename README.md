@@ -56,3 +56,51 @@ Durante la scansione delle librerie di terze parti tramite OWASP Dependency Chec
 Tutte le modifiche sono state verificate tramite build Jenkins e analisi statica con SonarQube. Dopo ogni aggiornamento, è stato eseguito un nuovo ciclo di test e controllo dei Quality Gate.
 
 
+## Risoluzione delle Vulnerabilità
+
+### Vulnerabilità 1(Low)
+
+Nella classe StoreException, i campi errorCode, errorMessage e statusCode sono stati resi final per impedirne la modifica dopo l’inizializzazione.
+
+**Prima:**
+```java
+private String errorCode;
+private String errorMessage;
+private int statusCode;
+```
+**Dopo:**
+```java
+private final String errorCode;
+private final String errorMessage;
+private final int statusCode;
+```
+### Motivazione
+
+Garantire l’immutabilità dei campi legati agli errori evita modifiche indesiderate durante il ciclo di vita dell’oggetto.  
+In contesti multi-threaded o non controllati, i setter avrebbero potuto essere sfruttati per alterare informazioni critiche come il messaggio o il codice di errore.
+
+---
+
+### Vulnerabilità Mitigata
+
+- **Tipo:** Modificabilità dello stato interno di oggetti di errore  
+- **Descrizione:** La presenza di metodi setter espone la classe a modifiche runtime non desiderate, con il rischio di:
+  - generare log incoerenti  
+  - falsificare i messaggi di errore  
+  - introdurre comportamenti imprevedibili
+
+---
+
+### Classificazione OWASP
+
+- **Categoria:** A05 – Security Misconfiguration (OWASP Top 10)  
+- **Rischio:** Esporre strutture critiche a configurazioni deboli o modificabili può portare a comportamenti imprevisti e vulnerabilità sfruttabili.
+
+---
+
+### Benefici della Correzione
+
+- Migliore **integrità** e **affidabilità** dell’oggetto StoreException
+- Prevenzione di **manipolazioni a runtime**
+- Codice più *sicuro, **chiaro** e conforme alle **best practice DevSecOps**
+- Maggiore **tracciabilità** e **coerenza nei log di errore**
