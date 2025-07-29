@@ -290,3 +290,65 @@ L’uso del logger standard (`java.util.logging.Logger`) permette invece di:
 - Integrazione nativa con sistemi di log e APM
 - Codice più professionale e pronto per la produzione
 - Separazione delle responsabilità tra log e output standard
+
+
+## Vulnerabilità 6 – (High)
+
+Nel progetto era presente un’interfaccia `BookStoreConstants` utilizzata impropriamente per la dichiarazione di costanti:
+
+**Prima:**
+
+```java
+package com.bittercode.constant;
+
+public interface BookStoreConstants {
+    public static String CONTENT_TYPE_TEXT_HTML = "text/html";
+}
+```
+**Dopo:**
+
+```java
+package com.bittercode.constant;
+
+public final class BookStoreConstants {
+    private BookStoreConstants() {
+    }
+
+    public static final String CONTENT_TYPE_TEXT_HTML = "text/html";
+}
+
+```
+
+### Motivazione
+
+Utilizzare un’interfaccia per definire costanti (`constant interface pattern`) è considerato un **antipattern** in Java per le seguenti ragioni:
+
+- Viola l’incapsulamento e la responsabilità singola di un’interfaccia
+- Espone dettagli implementativi a tutte le classi che la "implementano"
+- Aggiunge vincoli inutili all’ereditarietà (le classi diventano legate a quell’interfaccia)
+- È una pratica deprecata secondo gli standard Java (vedi *Effective Java* di Joshua Bloch)
+
+La soluzione corretta è spostare le costanti in una **classe `final` con costruttore privato**, impedendone l’istanza e rispettando il principio di responsabilità singola.
+
+### Classificazione OWASP
+
+- **Categoria:**
+  - A06 – Vulnerable and Outdated Components
+  - A07 – Identification and Authentication Failures *(indirettamente, per perdita di chiarezza nei componenti)*
+
+- **Gravità:** Alta (High)
+
+- **Rischio:** Elevato. Nonostante non sia una vulnerabilità sfruttabile direttamente da un attaccante, può:
+  - Favorire errori strutturali nel codice
+  - Compromettere la manutenibilità a lungo termine
+  - Introdurre dipendenze non intenzionali tra classi
+  - Impedire una gestione sicura e coerente delle costanti
+
+### Benefici della correzione
+
+- Codice più pulito, modulare e manutenibile
+- Rimozione di dipendenze non necessarie
+- Miglioramento della sicurezza e della chiarezza architetturale
+- Conformità agli standard di sviluppo Java professionale
+
+
