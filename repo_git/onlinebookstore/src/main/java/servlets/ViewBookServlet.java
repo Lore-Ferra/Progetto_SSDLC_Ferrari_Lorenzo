@@ -19,9 +19,17 @@ import com.bittercode.util.StoreUtil;
 
 public class ViewBookServlet extends HttpServlet {
 
-    // book service for database operations and logics
-    BookService bookService = new BookServiceImpl();
+    private final BookService bookService;
 
+    public ViewBookServlet() {
+        this(new BookServiceImpl());
+    }
+
+    public ViewBookServlet(BookService bookService) {
+        this.bookService = bookService;
+    }
+
+    @Override
     public void service(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         PrintWriter pw = res.getWriter();
         res.setContentType("text/html");
