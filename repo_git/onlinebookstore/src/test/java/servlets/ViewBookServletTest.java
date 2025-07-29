@@ -125,9 +125,9 @@ class ViewBookServletTest {
 
     @Test
     void testGetBookServiceReturnsInjectedService() {
-        BookService mockBookService = mock(BookService.class);
-        ViewBookServlet servlet = new ViewBookServlet(mockBookService);
+        BookService customMockBookService = mock(BookService.class);
+        ViewBookServlet customServlet = new ViewBookServlet(customMockBookService);
 
-        assertSame(mockBookService, servlet.getBookService());
+        assertSame(customMockBookService, customServlet.getBookService());
     }
 }
