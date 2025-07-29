@@ -16,33 +16,29 @@ import com.bittercode.util.DBUtil;
 
 public class BookServiceImpl implements BookService {
 
-    private static final String getAllBooksQuery = "SELECT * FROM " + BooksDBConstants.TABLE_BOOK;
-    private static final String getBookByIdQuery = "SELECT * FROM " + BooksDBConstants.TABLE_BOOK
+    private static final String SELECT_ALL_FROM = "SELECT * FROM ";
+    private static final String GET_ALL_BOOKS_QUERY = SELECT_ALL_FROM + BooksDBConstants.TABLE_BOOK;
+    private static final String GET_BOOK_BY_ID_QUERY = SELECT_ALL_FROM + BooksDBConstants.TABLE_BOOK
             + " WHERE " + BooksDBConstants.COLUMN_BARCODE + " = ?";
-
-    private static final String deleteBookByIdQuery = "DELETE FROM " + BooksDBConstants.TABLE_BOOK + "  WHERE "
-            + BooksDBConstants.COLUMN_BARCODE + "=?";
-
-    private static final String addBookQuery = "INSERT INTO " + BooksDBConstants.TABLE_BOOK + "  VALUES(?,?,?,?,?)";
-
-    private static final String updateBookQtyByIdQuery = "UPDATE " + BooksDBConstants.TABLE_BOOK + " SET "
-            + BooksDBConstants.COLUMN_QUANTITY + "=? WHERE " + BooksDBConstants.COLUMN_BARCODE
-            + "=?";
-
-    private static final String updateBookByIdQuery = "UPDATE " + BooksDBConstants.TABLE_BOOK + " SET "
+    private static final String DELETE_BOOK_BY_ID_QUERY = "DELETE FROM " + BooksDBConstants.TABLE_BOOK
+            + " WHERE " + BooksDBConstants.COLUMN_BARCODE + "=?";
+    private static final String ADD_BOOK_QUERY = "INSERT INTO " + BooksDBConstants.TABLE_BOOK + " VALUES(?,?,?,?,?)";
+    private static final String UPDATE_BOOK_QTY_BY_ID_QUERY = "UPDATE " + BooksDBConstants.TABLE_BOOK + " SET "
+            + BooksDBConstants.COLUMN_QUANTITY + "=? WHERE " + BooksDBConstants.COLUMN_BARCODE + "=?";
+    private static final String UPDATE_BOOK_BY_ID_QUERY = "UPDATE " + BooksDBConstants.TABLE_BOOK + " SET "
             + BooksDBConstants.COLUMN_NAME + "=? , "
             + BooksDBConstants.COLUMN_AUTHOR + "=?, "
             + BooksDBConstants.COLUMN_PRICE + "=?, "
             + BooksDBConstants.COLUMN_QUANTITY + "=? "
-            + "  WHERE " + BooksDBConstants.COLUMN_BARCODE
-            + "=?";
+            + " WHERE " + BooksDBConstants.COLUMN_BARCODE + "=?";
+
 
     @Override
     public Book getBookById(String bookId) throws StoreException {
         Book book = null;
         Connection con = DBUtil.getConnection();
         try {
-            PreparedStatement ps = con.prepareStatement(getBookByIdQuery);
+            PreparedStatement ps = con.prepareStatement(GET_BOOK_BY_ID_QUERY);
             ps.setString(1, bookId);
             ResultSet rs = ps.executeQuery();
 
@@ -67,7 +63,7 @@ public class BookServiceImpl implements BookService {
         Connection con = DBUtil.getConnection();
 
         try {
-            PreparedStatement ps = con.prepareStatement(getAllBooksQuery);
+            PreparedStatement ps = con.prepareStatement(GET_ALL_BOOKS_QUERY);
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -91,7 +87,7 @@ public class BookServiceImpl implements BookService {
         String response = ResponseCode.FAILURE.name();
         Connection con = DBUtil.getConnection();
         try {
-            PreparedStatement ps = con.prepareStatement(deleteBookByIdQuery);
+            PreparedStatement ps = con.prepareStatement(DELETE_BOOK_BY_ID_QUERY);
             ps.setString(1, bookId);
             int k = ps.executeUpdate();
             if (k == 1) {
@@ -109,7 +105,7 @@ public class BookServiceImpl implements BookService {
         String responseCode = ResponseCode.FAILURE.name();
         Connection con = DBUtil.getConnection();
         try {
-            PreparedStatement ps = con.prepareStatement(addBookQuery);
+            PreparedStatement ps = con.prepareStatement(ADD_BOOK_QUERY);
             ps.setString(1, book.getBarcode());
             ps.setString(2, book.getName());
             ps.setString(3, book.getAuthor());
@@ -131,7 +127,7 @@ public class BookServiceImpl implements BookService {
         String responseCode = ResponseCode.FAILURE.name();
         Connection con = DBUtil.getConnection();
         try {
-            PreparedStatement ps = con.prepareStatement(updateBookQtyByIdQuery);
+            PreparedStatement ps = con.prepareStatement(UPDATE_BOOK_QTY_BY_ID_QUERY);
             ps.setInt(1, quantity);
             ps.setString(2, bookId);
             ps.executeUpdate();
@@ -175,7 +171,7 @@ public class BookServiceImpl implements BookService {
         String responseCode = ResponseCode.FAILURE.name();
         Connection con = DBUtil.getConnection();
         try {
-            PreparedStatement ps = con.prepareStatement(updateBookByIdQuery);
+            PreparedStatement ps = con.prepareStatement(UPDATE_BOOK_BY_ID_QUERY);
             ps.setString(1, book.getName());
             ps.setString(2, book.getAuthor());
             ps.setDouble(3, book.getPrice());
