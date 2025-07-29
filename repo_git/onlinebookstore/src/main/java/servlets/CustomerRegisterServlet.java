@@ -2,6 +2,7 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.RequestDispatcher;
@@ -47,7 +48,7 @@ public class CustomerRegisterServlet extends HttpServlet {
         user.setAddress(addr);
         try {
             String respCode = userService.register(UserRole.CUSTOMER, user);
-            logger.info("Registration response: " + respCode);
+            logger.log(Level.INFO, "Registration response: {0}", respCode);
             if (ResponseCode.SUCCESS.name().equalsIgnoreCase(respCode)) {
                 RequestDispatcher rd = req.getRequestDispatcher("CustomerLogin.html");
                 rd.include(req, res);

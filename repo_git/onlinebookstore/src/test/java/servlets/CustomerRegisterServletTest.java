@@ -28,7 +28,7 @@ public class CustomerRegisterServletTest {
     private UserService mockUserService;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         servlet = new CustomerRegisterServlet();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -50,7 +50,7 @@ public class CustomerRegisterServletTest {
     }
 
     @Test
-    public void testRegistrationSuccess() throws Exception {
+    void testRegistrationSuccess() throws Exception {
         when(mockUserService.register(eq(UserRole.CUSTOMER), any(User.class)))
                 .thenReturn(ResponseCode.SUCCESS.name());
 
@@ -62,7 +62,7 @@ public class CustomerRegisterServletTest {
     }
 
     @Test
-    public void testRegistrationFailure() throws Exception {
+    void testRegistrationFailure() throws Exception {
         when(mockUserService.register(eq(UserRole.CUSTOMER), any(User.class)))
                 .thenReturn("EMAIL_ALREADY_EXISTS");
 
@@ -75,7 +75,7 @@ public class CustomerRegisterServletTest {
     }
 
     @Test
-    public void testUserIsCorrectlyBuilt() throws Exception {
+    void testUserIsCorrectlyBuilt() throws Exception {
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
         when(mockUserService.register(eq(UserRole.CUSTOMER), any(User.class)))
                 .thenReturn(ResponseCode.SUCCESS.name());
@@ -94,7 +94,7 @@ public class CustomerRegisterServletTest {
     }
 
     @Test
-    public void testExceptionHandling() throws Exception {
+    void testExceptionHandling() throws Exception {
         when(mockUserService.register(any(), any())).thenThrow(new RuntimeException("DB down"));
 
         servlet.service(request, response);
