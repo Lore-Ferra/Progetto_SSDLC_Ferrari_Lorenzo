@@ -3,6 +3,7 @@ package servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.RequestDispatcher;
@@ -99,7 +100,9 @@ public class ReceiptServlet extends HttpServlet {
 
 
                 int updatedQty = book.getQuantity() - quantity;
-                logger.info(String.format("Updated quantity: %d", updatedQty));
+                if (logger.isLoggable(Level.INFO)) {
+                    logger.info(String.format("Updated quantity: %d", updatedQty));
+                }
                 bookService.updateBookQtyById(book.getBarcode(), updatedQty);
                 return amount;
             }
