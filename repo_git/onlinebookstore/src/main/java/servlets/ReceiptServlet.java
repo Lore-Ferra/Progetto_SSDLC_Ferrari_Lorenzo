@@ -21,7 +21,15 @@ import com.bittercode.util.StoreUtil;
 public class ReceiptServlet extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(ReceiptServlet.class.getName());
-    private static final BookService bookService = new BookServiceImpl();
+    private static BookService bookService = new BookServiceImpl();
+
+    public ReceiptServlet() {
+        this(new BookServiceImpl());
+    }
+
+    public ReceiptServlet(BookService bookService) {
+        ReceiptServlet.bookService = bookService;
+    }
 
     @Override
     public void service(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
