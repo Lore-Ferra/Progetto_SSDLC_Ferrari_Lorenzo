@@ -21,7 +21,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class AddBookServletTest {
+class AddBookServletTest {
 
     private AddBookServlet servlet;
     private HttpServletRequest request;
@@ -32,7 +32,7 @@ public class AddBookServletTest {
     private StringWriter responseWriter;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         servlet = new AddBookServlet();
 
         request = mock(HttpServletRequest.class);
@@ -47,7 +47,7 @@ public class AddBookServletTest {
     }
 
     @Test
-    public void testRedirectToLoginWhenNotLoggedIn() throws Exception {
+    void testRedirectToLoginWhenNotLoggedIn() throws Exception {
         try (MockedStatic<StoreUtil> storeUtil = mockStatic(StoreUtil.class)) {
             storeUtil.when(() -> StoreUtil.isLoggedIn(UserRole.SELLER, session)).thenReturn(false);
 
@@ -59,7 +59,7 @@ public class AddBookServletTest {
     }
 
     @Test
-    public void testShowFormWhenBookNameIsNull() throws Exception {
+    void testShowFormWhenBookNameIsNull() throws Exception {
         try (MockedStatic<StoreUtil> storeUtil = mockStatic(StoreUtil.class)) {
             storeUtil.when(() -> StoreUtil.isLoggedIn(UserRole.SELLER, session)).thenReturn(true);
             storeUtil.when(() -> StoreUtil.setActiveTab(any(), eq("addbook"))).thenCallRealMethod();
@@ -74,7 +74,7 @@ public class AddBookServletTest {
     }
 
     @Test
-    public void testAddBookSuccess() throws Exception {
+    void testAddBookSuccess() throws Exception {
         try (MockedStatic<StoreUtil> storeUtil = mockStatic(StoreUtil.class)) {
             storeUtil.when(() -> StoreUtil.isLoggedIn(UserRole.SELLER, session)).thenReturn(true);
             storeUtil.when(() -> StoreUtil.setActiveTab(any(), eq("addbook"))).thenCallRealMethod();
@@ -96,7 +96,7 @@ public class AddBookServletTest {
     }
 
     @Test
-    public void testAddBookFailureInvalidInput() throws Exception {
+    void testAddBookFailureInvalidInput() throws Exception {
         try (MockedStatic<StoreUtil> storeUtil = mockStatic(StoreUtil.class)) {
             storeUtil.when(() -> StoreUtil.isLoggedIn(UserRole.SELLER, session)).thenReturn(true);
             storeUtil.when(() -> StoreUtil.setActiveTab(any(), eq("addbook"))).thenCallRealMethod();
