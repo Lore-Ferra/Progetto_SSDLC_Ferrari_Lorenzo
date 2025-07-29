@@ -3,7 +3,6 @@ package servlets;
 import com.bittercode.model.Book;
 import com.bittercode.model.UserRole;
 import com.bittercode.service.BookService;
-import com.bittercode.service.impl.BookServiceImpl;
 import com.bittercode.util.StoreUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +16,10 @@ import java.io.StringWriter;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 class ReceiptServletTest {
@@ -31,7 +34,8 @@ class ReceiptServletTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        servlet = new ReceiptServlet();
+        mockBookService = mock(BookService.class);
+        servlet = new ReceiptServlet(mockBookService);
 
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -60,14 +64,11 @@ class ReceiptServletTest {
     void testOrderProcessedSuccessfully() throws Exception {
         Book mockBook = new Book("B001", "Clean Code", "Robert C. Martin", 500.0, 10);
 
-        mockBookService = mock(BookService.class);
         try (
             MockedStatic<StoreUtil> utilMock = mockStatic(StoreUtil.class);
-            MockedStatic<BookServiceImpl> serviceMock = mockStatic(BookServiceImpl.class)
         ) {
             utilMock.when(() -> StoreUtil.isLoggedIn(UserRole.CUSTOMER, session)).thenReturn(true);
             utilMock.when(() -> StoreUtil.setActiveTab(any(), eq("cart"))).thenAnswer(inv -> null);
-            serviceMock.when(BookServiceImpl::new).thenReturn(mockBookService);
             when(mockBookService.getAllBooks()).thenReturn(Collections.singletonList(mockBook));
 
             when(request.getParameter("qty1")).thenReturn("2");
@@ -89,14 +90,11 @@ class ReceiptServletTest {
     void testInsufficientQuantity() throws Exception {
         Book mockBook = new Book("B001", "Java in Depth", "John Doe", 300.0, 1);
 
-        mockBookService = mock(BookService.class);
         try (
             MockedStatic<StoreUtil> utilMock = mockStatic(StoreUtil.class);
-            MockedStatic<BookServiceImpl> serviceMock = mockStatic(BookServiceImpl.class)
         ) {
             utilMock.when(() -> StoreUtil.isLoggedIn(UserRole.CUSTOMER, session)).thenReturn(true);
             utilMock.when(() -> StoreUtil.setActiveTab(any(), eq("cart"))).thenAnswer(inv -> null);
-            serviceMock.when(BookServiceImpl::new).thenReturn(mockBookService);
             when(mockBookService.getAllBooks()).thenReturn(Collections.singletonList(mockBook));
 
             when(request.getParameter("qty1")).thenReturn("5"); // richiesta eccessiva
