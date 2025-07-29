@@ -19,7 +19,11 @@ import com.bittercode.service.impl.BookServiceImpl;
 import com.bittercode.util.StoreUtil;
 
 public class AddBookServlet extends HttpServlet {
-    private static final BookService bookService = new BookServiceImpl();
+    private static BookService bookService = new BookServiceImpl();
+
+    public static void setBookService(BookService service) {
+        bookService = service;
+    }
 
     @Override
     public void service(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
