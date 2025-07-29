@@ -2,6 +2,7 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -19,6 +20,7 @@ import com.bittercode.service.impl.UserServiceImpl;
 
 public class CustomerRegisterServlet extends HttpServlet {
 
+    private static final Logger logger = Logger.getLogger(CustomerRegisterServlet.class.getName());
     private static UserService userService = new UserServiceImpl();
 
     public static void setUserService(UserService service) {
@@ -45,7 +47,7 @@ public class CustomerRegisterServlet extends HttpServlet {
         user.setAddress(addr);
         try {
             String respCode = userService.register(UserRole.CUSTOMER, user);
-            System.out.println(respCode);
+            logger.info("Registration response: " + respCode);
             if (ResponseCode.SUCCESS.name().equalsIgnoreCase(respCode)) {
                 RequestDispatcher rd = req.getRequestDispatcher("CustomerLogin.html");
                 rd.include(req, res);
