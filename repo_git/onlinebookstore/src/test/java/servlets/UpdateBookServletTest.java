@@ -17,6 +17,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 class UpdateBookServletTest {
@@ -122,5 +125,10 @@ class UpdateBookServletTest {
         when(request.getParameter(BooksDBConstants.COLUMN_AUTHOR)).thenReturn("John Doe");
         when(request.getParameter(BooksDBConstants.COLUMN_PRICE)).thenReturn("15.99");
         when(request.getParameter(BooksDBConstants.COLUMN_QUANTITY)).thenReturn("5");
+    }
+
+    @Test
+    void testGetBookServiceReturnsInjectedService() {
+        assertTrue(servlet.getBookService() == mockBookService);
     }
 }
