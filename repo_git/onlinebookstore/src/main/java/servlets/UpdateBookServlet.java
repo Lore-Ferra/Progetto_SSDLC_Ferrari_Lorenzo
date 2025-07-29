@@ -19,8 +19,21 @@ import com.bittercode.service.impl.BookServiceImpl;
 import com.bittercode.util.StoreUtil;
 
 public class UpdateBookServlet extends HttpServlet {
-    BookService bookService = new BookServiceImpl();
+    private final BookService bookService;
 
+    public UpdateBookServlet() {
+        this(new BookServiceImpl());
+    }
+
+    public UpdateBookServlet(BookService bookService) {
+        this.bookService = bookService;
+    }
+
+    protected BookService getBookService() {
+        return bookService;
+    }
+
+    @Override
     public void service(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         PrintWriter pw = res.getWriter();
         res.setContentType(BookStoreConstants.CONTENT_TYPE_TEXT_HTML);
@@ -52,7 +65,6 @@ public class UpdateBookServlet extends HttpServlet {
                             "<table class=\"tab\"><tr><td>Book Detail Updated Successfully!</td></tr></table>");
                 } else {
                     pw.println("<table class=\"tab\"><tr><td>Failed to Update Book!!</td></tr></table>");
-                    // rd.include(req, res);
                 }
 
                 return;
