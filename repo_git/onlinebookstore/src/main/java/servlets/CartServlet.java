@@ -24,10 +24,6 @@ public class CartServlet extends HttpServlet {
 
     private static BookService bookService = new BookServiceImpl();
 
-    public static void setBookService(BookService service) {
-        bookService = service;
-    }
-
     @Override
     public void service(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         PrintWriter pw = res.getWriter();
