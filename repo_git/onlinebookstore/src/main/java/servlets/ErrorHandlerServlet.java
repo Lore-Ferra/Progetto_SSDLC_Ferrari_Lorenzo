@@ -48,13 +48,15 @@ public class ErrorHandlerServlet extends HttpServlet {
             logger.log(java.util.logging.Level.SEVERE, "StoreException caught", storeException);
         }
 
-        logger.info("======ERROR TRIGGERED========");
-        logger.info(String.format("Servlet Name: %s", servletName));
-        logger.info(String.format("Request URI: %s", requestUri));
-        logger.info(String.format("Status Code: %d", statusCode));
-        logger.info(String.format("Error Code: %s", errorCode));
-        logger.info(String.format("Error Message: %s", errorMessage));
-        logger.info("=============================");
+        if (logger.isLoggable(java.util.logging.Level.INFO)) {
+            logger.info("======ERROR TRIGGERED========");
+            logger.info(String.format("Servlet Name: %s", servletName));
+            logger.info(String.format("Request URI: %s", requestUri));
+            logger.info(String.format("Status Code: %d", statusCode));
+            logger.info(String.format("Error Code: %s", errorCode));
+            logger.info(String.format("Error Message: %s", errorMessage));
+            logger.info("=============================");
+        }
 
         if (StoreUtil.isLoggedIn(UserRole.CUSTOMER, req.getSession())) {
             RequestDispatcher rd = req.getRequestDispatcher("CustomerHome.html");
