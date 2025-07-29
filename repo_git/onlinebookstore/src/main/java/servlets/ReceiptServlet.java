@@ -21,14 +21,15 @@ import com.bittercode.util.StoreUtil;
 public class ReceiptServlet extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(ReceiptServlet.class.getName());
-    private static BookService bookService = new BookServiceImpl();
+    
+    private final BookService bookService;
 
     public ReceiptServlet() {
         this(new BookServiceImpl());
     }
 
     public ReceiptServlet(BookService bookService) {
-        ReceiptServlet.bookService = bookService;
+        this.bookService = bookService;
     }
 
     @Override
@@ -47,13 +48,16 @@ public class ReceiptServlet extends HttpServlet {
             RequestDispatcher rd = req.getRequestDispatcher("CustomerHome.html");
             rd.include(req, res);
             StoreUtil.setActiveTab(pw, "cart");
-            pw.println("<div class=\"tab\">Your order status is as below</div>");
-            pw.println(
-                    "<div class=\"tab\">\r\n" + "		<table>\r\n" + "			<tr>\r\n" + "				\r\n"
-                            + "				<th>Book Code</th>\r\n" + "				<th>Book Name</th>\r\n"
-                            + "				<th>Book Author</th>\r\n" + "				<th>Book Price</th>\r\n"
-                            + "				<th>Quantity</th>\r\n" + "				<th>Amount</th>\r\n"
-                            + "			</tr>");
+            pw.println("<div class=\"tab\">");
+            pw.println("  <table>");
+            pw.println("    <tr>");
+            pw.println("      <th>Book Code</th>");
+            pw.println("      <th>Book Name</th>");
+            pw.println("      <th>Book Author</th>");
+            pw.println("      <th>Book Price</th>");
+            pw.println("      <th>Quantity</th>");
+            pw.println("      <th>Amount</th>");
+            pw.println("    </tr>");
             double total = 0.0;
             for (Book book : books) {
                 double bPrice = book.getPrice();
@@ -82,13 +86,17 @@ public class ReceiptServlet extends HttpServlet {
             }
 
             if ("pay".equals(getChecked)) {
-                pw.println("<tr><td>" + book.getBarcode() + "</td>");
-                pw.println("<td>" + book.getName() + "</td>");
-                pw.println("<td>" + book.getAuthor() + "</td>");
-                pw.println("<td>" + bPrice + "</td>");
-                pw.println("<td>" + quantity + "</td>");
                 double amount = bPrice * quantity;
-                pw.println("<td>" + amount + "</td></tr>");
+                pw.println(String.format(
+                    "    <tr><td>%s</td><td>%s</td><td>%s</td><td>%.2f</td><td>%d</td><td>%.2f</td></tr>",
+                    book.getBarcode(),
+                    book.getName(),
+                    book.getAuthor(),
+                    bPrice,
+                    quantity,
+                    amount
+                ));
+
 
                 int updatedQty = book.getQuantity() - quantity;
                 logger.info("Updated quantity: " + updatedQty);
