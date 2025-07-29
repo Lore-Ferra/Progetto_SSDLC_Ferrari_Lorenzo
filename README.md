@@ -186,3 +186,38 @@ La modifica a `static final` garantisce che la dipendenza:
 - Evita **ambiguità semantica** sullo scope del campo
 - Agevola strumenti di analisi statica come **SonarQube**
 
+### Vulnerabilità 4 – (Medium)
+
+In alcune servlet (es. `CustomerRegisterServlet`, `CartServlet`) mancava l'annotazione `@Override` sopra la dichiarazione del metodo `service(...)`.
+
+**Prima:**
+```java
+public void service(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+```
+**Prima:**
+```java
+@Override
+public void service(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+```
+
+#### Motivazione
+
+L'annotazione `@Override` è essenziale per garantire che un metodo stia effettivamente sovrascrivendo una definizione nella superclasse (`HttpServlet`). La sua assenza può causare:
+
+- **Errori silenziosi**, ad esempio quando si sbaglia la firma del metodo (nome, parametri o tipo di ritorno)
+- **Comportamenti inattesi** in fase di esecuzione, perché il metodo definito non viene mai invocato
+- **Difficoltà** nell'uso di strumenti di analisi statica o refactoring automatico
+
+#### Classificazione OWASP
+
+- **Categoria:**
+  - A06 – Vulnerable and Outdated Components (cattivo uso delle funzionalità del linguaggio)
+- **Gravità:** Media (Medium)
+- **Rischio:** Potenziale malfunzionamento dell’applicazione in caso di firma errata non rilevata a compilazione. Non è una falla di sicurezza diretta, ma può causare instabilità o bug difficili da diagnosticare.
+
+#### Benefici della correzione
+
+- Evita **errori di overriding silenziosi**
+- Migliora la **leggibilità** e la **manutenibilità** del codice
+- Favorisce l'integrazione con strumenti come **SonarQube**, **IDE**, **CI/CD**
+- Rende il comportamento della servlet **più prevedibile e corretto**

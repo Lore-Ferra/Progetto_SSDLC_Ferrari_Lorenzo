@@ -18,7 +18,7 @@ import java.io.StringWriter;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class CustomerRegisterServletTest {
+class CustomerRegisterServletTest {
 
     private CustomerRegisterServlet servlet;
     private HttpServletRequest request;
