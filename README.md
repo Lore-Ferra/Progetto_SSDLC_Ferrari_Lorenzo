@@ -92,6 +92,7 @@ In contesti multi-threaded o non controllati, i setter avrebbero potuto essere s
 ### Classificazione OWASP
 
 - **Categoria:** A05 – Security Misconfiguration (OWASP Top 10)  
+- **Gravità:** Bassa (Low)
 - **Rischio:** Esporre strutture critiche a configurazioni deboli o modificabili può portare a comportamenti imprevisti e vulnerabilità sfruttabili.
 
 
