@@ -7,6 +7,7 @@ import com.bittercode.service.BookService;
 import com.bittercode.util.StoreUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.*;
@@ -16,6 +17,8 @@ import java.io.StringWriter;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 class ProcessPaymentServletTest {
@@ -50,45 +53,48 @@ class ProcessPaymentServletTest {
 
     @Test
     void testRedirectsIfNotLoggedIn() throws Exception {
-        when(StoreUtil.isLoggedIn(UserRole.CUSTOMER, session)).thenReturn(false);
+        try (MockedStatic<StoreUtil> utilMock = mockStatic(StoreUtil.class)) {
+            utilMock.when(() -> StoreUtil.isLoggedIn(UserRole.CUSTOMER, session)).thenReturn(false);
 
-        servlet.service(request, response);
+            servlet.service(request, response);
 
-        verify(dispatcher).include(request, response);
-        String output = responseWriter.toString();
-        assertTrue(output.contains("Please Login First to Continue"));
+            verify(dispatcher).include(request, response);
+            String output = responseWriter.toString();
+            assertTrue(output.contains("Please Login First to Continue"));
+        }
     }
 
     @Test
     void testProcessesCartAndUpdatesBooks() throws Exception {
-        when(StoreUtil.isLoggedIn(UserRole.CUSTOMER, session)).thenReturn(true);
+        try (MockedStatic<StoreUtil> utilMock = mockStatic(StoreUtil.class)) {
+            utilMock.when(() -> StoreUtil.isLoggedIn(UserRole.CUSTOMER, session)).thenReturn(true);
+            utilMock.when(() -> StoreUtil.setActiveTab(any(), eq("cart"))).then(invocation -> null);
 
-        Book mockBook = new Book();
-        mockBook.setBarcode("ABC123");
-        mockBook.setName("Java 101");
-        mockBook.setAuthor("X Dev");
-        mockBook.setPrice(450.0);
-        mockBook.setQuantity(10);
+            Book mockBook = new Book();
+            mockBook.setBarcode("ABC123");
+            mockBook.setName("Java 101");
+            mockBook.setAuthor("X Dev");
+            mockBook.setPrice(450.0);
+            mockBook.setQuantity(10);
 
-        Cart cart = new Cart(mockBook, 2);
-        cart.setBook(mockBook);
-        cart.setQuantity(2);
+            Cart cart = new Cart(mockBook, 2);
 
-        when(session.getAttribute("cartItems")).thenReturn(Arrays.asList(cart));
+            when(session.getAttribute("cartItems")).thenReturn(Arrays.asList(cart));
 
-        servlet.service(request, response);
+            servlet.service(request, response);
 
-        String output = responseWriter.toString();
-        assertTrue(output.contains("Java 101"));
-        assertTrue(output.contains("X Dev"));
-        assertTrue(output.contains("ORDABC123TM"));
+            String output = responseWriter.toString();
+            assertTrue(output.contains("Java 101"));
+            assertTrue(output.contains("X Dev"));
+            assertTrue(output.contains("ORDABC123TM"));
 
-        verify(bookService).updateBookQtyById(eq("ABC123"), eq(8));
+            verify(bookService).updateBookQtyById(eq("ABC123"), eq(8));
 
-        verify(session).removeAttribute("qty_ABC123");
-        verify(session).removeAttribute("amountToPay");
-        verify(session).removeAttribute("cartItems");
-        verify(session).removeAttribute("items");
-        verify(session).removeAttribute("selectedBookId");
+            verify(session).removeAttribute("qty_ABC123");
+            verify(session).removeAttribute("amountToPay");
+            verify(session).removeAttribute("cartItems");
+            verify(session).removeAttribute("items");
+            verify(session).removeAttribute("selectedBookId");
+        }
     }
 }
