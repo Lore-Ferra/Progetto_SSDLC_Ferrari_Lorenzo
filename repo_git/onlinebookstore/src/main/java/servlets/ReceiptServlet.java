@@ -99,7 +99,7 @@ public class ReceiptServlet extends HttpServlet {
 
 
                 int updatedQty = book.getQuantity() - quantity;
-                logger.info("Updated quantity: " + updatedQty);
+                logger.info(String.format("Updated quantity: %d", updatedQty));
                 bookService.updateBookQtyById(book.getBarcode(), updatedQty);
                 return amount;
             }
