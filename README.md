@@ -58,7 +58,7 @@ Tutte le modifiche sono state verificate tramite build Jenkins e analisi statica
 
 ## Risoluzione delle Vulnerabilità
 
-### Vulnerabilità 1(Low)
+### Vulnerabilità 1 - (Low)
 
 Nella classe StoreException, i campi errorCode, errorMessage e statusCode sono stati resi final per impedirne la modifica dopo l’inizializzazione.
 
@@ -91,7 +91,7 @@ In contesti multi-threaded o non controllati, i setter avrebbero potuto essere s
 
 ### Classificazione OWASP
 
-- **Categoria:** A05 – Security Misconfiguration (OWASP Top 10)  
+- **Categoria:** **A05 – Security Misconfiguration** (OWASP Top 10)  
 - **Gravità:** Bassa (Low)
 - **Rischio:** Esporre strutture critiche a configurazioni deboli o modificabili può portare a comportamenti imprevisti e vulnerabilità sfruttabili.
 
@@ -102,3 +102,42 @@ In contesti multi-threaded o non controllati, i setter avrebbero potuto essere s
 - Prevenzione di **manipolazioni a runtime**
 - Codice più *sicuro, **chiaro** e conforme alle **best practice DevSecOps**
 - Maggiore **tracciabilità** e **coerenza nei log di errore**
+
+
+## Vulnerabilità 2 – (Low)
+
+In alcune parti del codice, veniva utilizzata una dichiarazione esplicita del tipo generico nel costruttore di `ArrayList`.
+
+**Prima:**
+```java
+List<Book> books = new ArrayList<Book>();
+```
+**Dopo:**
+```java
+List<Book> books = new ArrayList<>();
+```
+
+### Motivazione
+
+L’utilizzo del diamond operator (`<>`) introdotto in Java 7 evita la duplicazione ridondante del tipo e migliora:
+
+- La **leggibilità** del codice
+- La **manutenibilità**
+- La **sicurezza evolutiva** del codice (se cambia il tipo, si modifica una sola volta)
+- La **conformità** con le best practice di sviluppo moderne
+
+
+### Classificazione OWASP
+
+- **Categoria:** Non direttamente classificabile in OWASP Top 10, ma associabile a:
+  - **A06 – Vulnerable and Outdated Components** (utilizzo di pattern non aggiornati)
+- **Gravità:** Bassa (Low)
+- **Rischio:** Nessun rischio diretto di sicurezza, ma può contribuire a una base di codice obsoleta e fragile, più esposta a errori futuri.
+
+
+### Benefici della correzione
+
+- Migliore **conformità** agli standard Java
+- Codice più **chiaro** e privo di duplicazioni inutili
+- Facilita il lavoro in team e l’integrazione con tool statici come **SonarQube**
+- Riduce la possibilità di **refusi** durante il refactoring
