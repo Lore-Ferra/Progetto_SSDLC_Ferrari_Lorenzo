@@ -88,7 +88,7 @@ In contesti multi-threaded o non controllati, i setter avrebbero potuto essere s
 
 ### Classificazione OWASP
 
-- **Categoria:** **A05 – Security Misconfiguration** (OWASP Top 10)
+- **Categoria:** A05 – Security Misconfiguration
 - **Gravità:** Bassa (Low)
 - **Rischio:** Esporre strutture critiche a configurazioni deboli o modificabili può portare a comportamenti imprevisti e vulnerabilità sfruttabili.
 
@@ -127,7 +127,7 @@ L’utilizzo del diamond operator (`<>`) introdotto in Java 7 evita la duplicazi
 ### Classificazione OWASP
 
 - **Categoria:** Non direttamente classificabile in OWASP Top 10, ma associabile a:
-  - **A06 – Vulnerable and Outdated Components** (utilizzo di pattern non aggiornati)
+  - A06 – Vulnerable and Outdated Components (utilizzo di pattern non aggiornati)
 - **Gravità:** Bassa (Low)
 - **Rischio:** Nessun rischio diretto di sicurezza, ma può contribuire a una base di codice obsoleta e fragile, più esposta a errori futuri.
 
@@ -351,4 +351,136 @@ La soluzione corretta è spostare le costanti in una **classe `final` con costru
 - Miglioramento della sicurezza e della chiarezza architetturale
 - Conformità agli standard di sviluppo Java professionale
 
+
+## Vulnerabilità 7 – (High)
+
+Nel file `BookServiceImpl.java` erano presenti diverse costanti `static final` che **non rispettavano la convenzione di naming** prevista dagli standard Java e inoltre veniva utilizzato in modo scorretto `SELECT *`, racchiuso nella costante `SELECT_ALL_FROM`.
+
+### Esempi di codice corretto e scorretto
+
+**Prima:**
+```java
+private static final String SELECT_ALL_FROM = "SELECT * FROM ";
+private static final String getBooksByCommaSeperatedBookIdsQuery = SELECT_ALL_FROM + BooksDBConstants.TABLE_BOOK + " ...";
+private static final String updateBookQtyByIdQuery = "UPDATE ...";
+```
+
+**Dopo:**
+```java
+private static final String SELECT_BOOK_FIELDS = "SELECT barcode, name, author, price, quantity FROM ";
+private static final String GET_BOOKS_BY_COMMA_SEPARATED_BOOK_IDS_QUERY = SELECT_BOOK_FIELDS + BooksDBConstants.TABLE_BOOK + " ...";
+private static final String UPDATE_BOOK_QTY_BY_ID_QUERY = "UPDATE ...";
+```
+
+### Motivazione
+
+#### 1. Naming delle costanti
+
+Le costanti `static final` devono seguire il formato **SNAKE_CASE** (maiuscole con underscore), secondo la seguente espressione regolare:
+
+`^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$`
+
+
+Non rispettare questa convenzione comporta:
+
+- Ridotta leggibilità
+- Difficoltà nel distinguere costanti da variabili locali
+- Warning nei tool di analisi statica come SonarQube
+- Violazione degli standard Java
+
+#### 2. Uso scorretto di `SELECT *`
+
+Anche se racchiuso in una costante, l'uso di `SELECT *`:
+
+- Recupera tutte le colonne, anche quelle non necessarie
+- Complica la gestione del refactoring del database
+- Introduce problemi di performance e ambiguità
+- Espone potenzialmente più dati del necessario, violando il principio del **least privilege**
+
+
+### Classificazione OWASP
+
+- **Categoria:**
+  - A06 – Vulnerable and Outdated Components
+  - A05 – Security Misconfiguration *(per l'utilizzo di query SQL non ottimizzate)*
+
+- **Gravità:** Alta (High)
+
+- **Rischio:** Elevato. Queste pratiche compromettono la manutenibilità, leggibilità e sicurezza del codice, aumentando il rischio di:
+  - Dati sovraesposti
+  - Query inefficienti
+  - Errori futuri difficili da diagnosticare
+
+
+### Benefici della correzione
+
+- Rispetto delle naming convention Java
+- SQL più sicuro, esplicito e performante
+- Codice più leggibile e conforme agli standard aziendali
+- Riduzione dei warning nei sistemi CI/CD
+- Migliore controllo sui dati restituiti dalle query
+
+
+## Vulnerabilità 8 – (High)
+
+In vari metodi della classe `BookServiceImpl` venivano utilizzati oggetti `PreparedStatement` (e in alcuni casi `ResultSet`) **senza chiusura esplicita**, causando potenziali **resource leak**. Questa violazione delle best practice può portare all'esaurimento delle connessioni al database in ambienti reali e viene segnalata da tool come **SonarQube**.
+
+---
+
+### Metodi coinvolti
+
+- `getBookById(String bookId)`
+- `getAllBooks()`
+- `deleteBookById(String bookId)`
+- `addBook(Book book)`
+- `updateBookQtyById(String bookId, int quantity)`
+- `updateBook(Book book)`
+
+---
+
+**Prima:**
+```java
+PreparedStatement ps = con.prepareStatement(UPDATE_BOOK_BY_ID_QUERY);
+ps.setString(1, book.getName());
+// ...
+ps.executeUpdate();
+```
+
+**Dopo:**
+```java
+try (PreparedStatement ps = con.prepareStatement(UPDATE_BOOK_BY_ID_QUERY)) {
+    ps.setString(1, book.getName());
+    // ...
+    ps.executeUpdate();
+}
+```
+
+### Motivazione
+
+Non utilizzare `try-with-resources` o non chiudere esplicitamente `PreparedStatement` e `ResultSet` può causare:
+
+- Esaurimento del connection pool
+- Errori runtime difficili da diagnosticare
+- Comportamenti instabili in ambienti di produzione
+
+L’uso di `try-with-resources` garantisce la **chiusura automatica** delle risorse, anche in caso di eccezioni.
+
+
+### Classificazione OWASP
+
+- **Categoria:** A06 – Vulnerable and Outdated Components
+- **Gravità:** Alta (High)
+- **Rischio:** Elevato. La mancata chiusura di risorse critiche può:
+  - Bloccare l’accesso al database
+  - Degradare le performance
+  - Rendere il sistema instabile
+
+
+### Benefici della correzione
+
+- Chiusura automatica e sicura delle risorse
+- Codice più robusto e professionale
+- Compatibilità con Java moderno (7+)
+- Prevenzione di errori gravi in ambienti di produzione
+- Riduzione dei warning nei sistemi CI/CD come SonarQube
 
