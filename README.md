@@ -141,3 +141,48 @@ L’utilizzo del diamond operator (`<>`) introdotto in Java 7 evita la duplicazi
 - Codice più **chiaro** e privo di duplicazioni inutili
 - Facilita il lavoro in team e l’integrazione con tool statici come **SonarQube**
 - Riduce la possibilità di **refusi** durante il refactoring
+
+
+### Vulnerabilità 3 – (Medium)
+
+In alcune servlet (es. `CartServlet`) veniva dichiarato un campo **di istanza mutabile** per una dipendenza condivisa (`BookService`), violando le best practice per la gestione dei componenti in ambienti multithread come le servlet.
+
+**Prima:**
+```java
+BookService bookService = new BookServiceImpl();
+```
+**Dopo:**
+```java
+private static final BookService bookService = new BookServiceImpl();
+```
+
+#### Motivazione
+
+Le servlet sono **singleton gestiti dal container**: un solo oggetto `CartServlet` serve molteplici richieste concorrenti. Usare campi **non statici e non finali** può:
+
+- Indurre in errore (sembrano specifici per richiesta, ma non lo sono)
+- Essere fonte di bug se accidentalmente mutati
+- Creare problemi di thread safety in caso di modifiche future
+
+La modifica a `static final` garantisce che la dipendenza:
+
+- sia **immutabile**
+- sia **unica e condivisa**
+- rispetto le **best practice**
+
+#### Classificazione OWASP
+
+- **Categoria:**
+  - A05 – Security Misconfiguration
+  - A04 – Insecure Design (per cattiva progettazione dello scope degli oggetti)
+- **Gravità:** Media (Medium)
+- **Rischio:** Medio. Anche se non introduce direttamente una vulnerabilità exploitabile, può causare condizioni di concorrenza o instabilità se il campo viene mutato da più thread.
+
+#### Benefici della correzione
+
+- Conformità ai principi di progettazione sicura per servlet
+- Miglioramento della **thread safety**
+- Rende il codice più **leggibile** e **testabile**
+- Evita **ambiguità semantica** sullo scope del campo
+- Agevola strumenti di analisi statica come **SonarQube**
+
