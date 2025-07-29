@@ -19,6 +19,10 @@ public class RemoveBookServlet extends HttpServlet {
 
     private static final BookService bookService = new BookServiceImpl();
 
+    protected BookService getBookService() {
+        return bookService;
+    }
+
     @Override
     public void service(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         PrintWriter pw = res.getWriter();
