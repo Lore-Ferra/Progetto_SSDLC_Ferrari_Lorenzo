@@ -16,6 +16,7 @@ import javax.servlet.http.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -129,6 +130,6 @@ class UpdateBookServletTest {
 
     @Test
     void testGetBookServiceReturnsInjectedService() {
-        assertTrue(servlet.getBookService() == mockBookService);
+        assertSame(mockBookService, servlet.getBookService());
     }
 }

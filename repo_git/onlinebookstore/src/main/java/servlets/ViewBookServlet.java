@@ -29,6 +29,10 @@ public class ViewBookServlet extends HttpServlet {
         this.bookService = bookService;
     }
 
+    protected BookService getBookService() {
+        return bookService;
+    }
+
     @Override
     public void service(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         PrintWriter pw = res.getWriter();

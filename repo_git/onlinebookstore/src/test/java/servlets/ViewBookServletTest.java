@@ -15,7 +15,11 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 class ViewBookServletTest {
@@ -117,5 +121,13 @@ class ViewBookServletTest {
 
             assertTrue(true);
         }
+    }
+
+    @Test
+    void testGetBookServiceReturnsInjectedService() {
+        BookService mockBookService = mock(BookService.class);
+        ViewBookServlet servlet = new ViewBookServlet(mockBookService);
+
+        assertSame(mockBookService, servlet.getBookService());
     }
 }
