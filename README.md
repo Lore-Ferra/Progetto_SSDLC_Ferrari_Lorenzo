@@ -223,6 +223,7 @@ L'annotazione `@Override` è essenziale per garantire che un metodo stia effetti
 - Favorisce l'integrazione con strumenti come **SonarQube**, **IDE**, **CI/CD**
 - Rende il comportamento della servlet **più prevedibile e corretto**
 
+
 ## Vulnerabilità 5 – (Medium)
 
 In alcune servlet, come `ErrorHandlerServlet`, veniva utilizzato `System.out.println(...)` per la stampa di messaggi diagnostici e di errore.
@@ -242,13 +243,15 @@ System.out.println("=============================");
 **Dopo:**
 
 ```java
-logger.info("======ERROR TRIGGERED========");
-logger.info(String.format("Servlet Name: %s", servletName));
-logger.info(String.format("Request URI: %s", requestUri));
-logger.info(String.format("Status Code: %d", statusCode));
-logger.info(String.format("Error Code: %s", errorCode));
-logger.info(String.format("Error Message: %s", errorMessage));
-logger.info("=============================");
+if (logger.isLoggable(Level.INFO)) {
+    logger.info("======ERROR TRIGGERED========");
+    logger.info(String.format("Servlet Name: %s", servletName));
+    logger.info(String.format("Request URI: %s", requestUri));
+    logger.info(String.format("Status Code: %d", statusCode));
+    logger.info(String.format("Error Code: %s", errorCode));
+    logger.info(String.format("Error Message: %s", errorMessage));
+    logger.info("=============================");
+}
 ```
 
 ### Motivazione
@@ -266,6 +269,7 @@ L’uso del logger standard (`java.util.logging.Logger`) permette invece di:
 - Distinguere tra log informativi, di errore o di debug
 - Centralizzare la configurazione dei log
 - Rendere il codice più pulito e professionale
+- Evitare sprechi computazionali grazie al controllo `logger.isLoggable(...)`
 
 ### Classificazione OWASP
 
@@ -278,7 +282,7 @@ L’uso del logger standard (`java.util.logging.Logger`) permette invece di:
 - **Rischio:** Moderato. Non espone direttamente a un attacco, ma può:
   - Nascondere o perdere informazioni importanti in produzione
   - Rendere più difficile il troubleshooting
-  - Rendere il sistema non conforme agli standard aziendali (es. PCI-DSS, ISO 27001)
+  - Rendere il sistema non conforme agli standard aziendali
 
 ### Benefici della correzione
 
