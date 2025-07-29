@@ -1,15 +1,19 @@
 package com.bittercode.constant.db;
 
-public interface UsersDBConstants {
+public final class UsersDBConstants {
 
-	public static String TABLE_USERS = "users";
-	
-	public static String COLUMN_USERNAME = "username";
-	public static String COLUMN_PASSWORD = "password";
-	public static String COLUMN_FIRSTNAME = "firstname";
-	public static String COLUMN_LASTNAME = "lastname";
-	public static String COLUMN_ADDRESS = "address";
-	public static String COLUMN_PHONE = "phone";
-	public static String COLUMN_MAILID = "mailid";
-	public static String COLUMN_USERTYPE = "usertype";
+    private UsersDBConstants() {
+        // Previene l'istanza della classe
+    }
+
+    public static final String TABLE_USERS = "users";
+
+    public static final String COLUMN_USERNAME = "username";
+    public static final String COLUMN_PASSWORD = "password";
+    public static final String COLUMN_FIRSTNAME = "firstname";
+    public static final String COLUMN_LASTNAME = "lastname";
+    public static final String COLUMN_ADDRESS = "address";
+    public static final String COLUMN_PHONE = "phone";
+    public static final String COLUMN_MAILID = "mailid";
+    public static final String COLUMN_USERTYPE = "usertype";
 }
