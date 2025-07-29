@@ -17,6 +17,9 @@ import com.bittercode.util.StoreUtil;
 
 public class ErrorHandlerServlet extends HttpServlet {
 
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ErrorHandlerServlet.class.getName());
+
+    @Override
     public void service(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         PrintWriter pw = res.getWriter();
         res.setContentType("text/html");
@@ -39,21 +42,19 @@ public class ErrorHandlerServlet extends HttpServlet {
 
         if (throwable instanceof StoreException) {
             StoreException storeException = (StoreException) throwable;
-            if (storeException != null) {
-                errorMessage = storeException.getMessage();
-                statusCode = storeException.getStatusCode();
-                errorCode = storeException.getErrorCode();
-                storeException.printStackTrace();
-            }
+            errorMessage = storeException.getMessage();
+            statusCode = storeException.getStatusCode();
+            errorCode = storeException.getErrorCode();
+            logger.log(java.util.logging.Level.SEVERE, "StoreException caught", storeException);
         }
 
-        System.out.println("======ERROR TRIGGERED========");
-        System.out.println("Servlet Name: " + servletName);
-        System.out.println("Request URI: " + requestUri);
-        System.out.println("Status Code: " + statusCode);
-        System.out.println("Error Code: " + errorCode);
-        System.out.println("Error Message: " + errorMessage);
-        System.out.println("=============================");
+        logger.info("======ERROR TRIGGERED========");
+        logger.info(String.format("Servlet Name: %s", servletName));
+        logger.info(String.format("Request URI: %s", requestUri));
+        logger.info(String.format("Status Code: %d", statusCode));
+        logger.info(String.format("Error Code: %s", errorCode));
+        logger.info(String.format("Error Message: %s", errorMessage));
+        logger.info("=============================");
 
         if (StoreUtil.isLoggedIn(UserRole.CUSTOMER, req.getSession())) {
             RequestDispatcher rd = req.getRequestDispatcher("CustomerHome.html");
