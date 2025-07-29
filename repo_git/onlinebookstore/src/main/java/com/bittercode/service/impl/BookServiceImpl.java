@@ -128,8 +128,8 @@ public class BookServiceImpl implements BookService {
     public String updateBookQtyById(String bookId, int quantity) throws StoreException {
         String responseCode = ResponseCode.FAILURE.name();
         Connection con = DBUtil.getConnection();
-        try {
-            PreparedStatement ps = con.prepareStatement(UPDATE_BOOK_QTY_BY_ID_QUERY);
+
+        try (PreparedStatement ps = con.prepareStatement(UPDATE_BOOK_QTY_BY_ID_QUERY)) {
             ps.setInt(1, quantity);
             ps.setString(2, bookId);
             ps.executeUpdate();
@@ -138,6 +138,7 @@ public class BookServiceImpl implements BookService {
             responseCode += " : " + e.getMessage();
             e.printStackTrace();
         }
+
         return responseCode;
     }
 
@@ -173,8 +174,8 @@ public class BookServiceImpl implements BookService {
     public String updateBook(Book book) throws StoreException {
         String responseCode = ResponseCode.FAILURE.name();
         Connection con = DBUtil.getConnection();
-        try {
-            PreparedStatement ps = con.prepareStatement(UPDATE_BOOK_BY_ID_QUERY);
+
+        try (PreparedStatement ps = con.prepareStatement(UPDATE_BOOK_BY_ID_QUERY)) {
             ps.setString(1, book.getName());
             ps.setString(2, book.getAuthor());
             ps.setDouble(3, book.getPrice());
@@ -186,7 +187,7 @@ public class BookServiceImpl implements BookService {
             responseCode += " : " + e.getMessage();
             e.printStackTrace();
         }
+
         return responseCode;
     }
-
 }
