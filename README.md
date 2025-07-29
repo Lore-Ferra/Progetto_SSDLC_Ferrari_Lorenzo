@@ -79,7 +79,6 @@ private final int statusCode;
 Garantire l’immutabilità dei campi legati agli errori evita modifiche indesiderate durante il ciclo di vita dell’oggetto.  
 In contesti multi-threaded o non controllati, i setter avrebbero potuto essere sfruttati per alterare informazioni critiche come il messaggio o il codice di errore.
 
----
 
 ### Vulnerabilità Mitigata
 
@@ -89,14 +88,12 @@ In contesti multi-threaded o non controllati, i setter avrebbero potuto essere s
   - falsificare i messaggi di errore  
   - introdurre comportamenti imprevedibili
 
----
 
 ### Classificazione OWASP
 
 - **Categoria:** A05 – Security Misconfiguration (OWASP Top 10)  
 - **Rischio:** Esporre strutture critiche a configurazioni deboli o modificabili può portare a comportamenti imprevisti e vulnerabilità sfruttabili.
 
----
 
 ### Benefici della Correzione
 
