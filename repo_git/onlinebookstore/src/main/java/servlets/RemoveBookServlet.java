@@ -17,8 +17,9 @@ import com.bittercode.util.StoreUtil;
 
 public class RemoveBookServlet extends HttpServlet {
 
-    BookService bookService = new BookServiceImpl();
+    private static final BookService bookService = new BookServiceImpl();
 
+    @Override
     public void service(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         PrintWriter pw = res.getWriter();
         res.setContentType("text/html");
@@ -36,7 +37,6 @@ public class RemoveBookServlet extends HttpServlet {
             StoreUtil.setActiveTab(pw, "removebook");
             pw.println("<div class='container'>");
             if (bookId == null || bookId.isBlank()) {
-                // render the remove book form;
                 showRemoveBookForm(pw);
                 return;
             } // else continue
