@@ -482,3 +482,107 @@ L’uso di `try-with-resources` garantisce la **chiusura automatica** delle riso
 - Compatibilità con Java moderno (7+)
 - Prevenzione di errori gravi in ambienti di produzione
 - Riduzione dei warning nei sistemi CI/CD come SonarQube
+
+## Vulnerabilità 1 – (Security Hotspot)
+
+### Inclusione di script esterni tramite CDN senza `integrity` e `crossorigin`
+
+Nel codice HTML è presente la seguente inclusione:
+
+**Prima:**
+```html
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.2.1/dist/js/bootstrap.min.js"></script>
+```
+
+### Problema
+
+Il codice include una libreria da una **fonte esterna (CDN)** senza l'utilizzo dell'attributo `integrity` (Subresource Integrity) né `crossorigin`.  
+Questo espone l'applicazione a rischi nel caso in cui il CDN venga compromesso o il contenuto modificato.
+
+
+### Rischi
+
+- **Code injection** nel browser da un file JS manomesso
+- Nessuna verifica dell’**integrità del contenuto** ricevuto
+- Rottura di policy di sicurezza (es. **Content Security Policy** - CSP)
+
+**Dopo:**
+```html
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@4.2.1/dist/js/bootstrap.min.js"
+  integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+  crossorigin="anonymous"
+></script>
+```
+
+L'hash `integrity` deve corrispondere esattamente alla versione scaricata.
+
+
+### Classificazione OWASP
+
+- **Categoria:** A06 – Vulnerable and Outdated Components
+- **Gravità:** Media
+- **Rischio:** L'inclusione di risorse da fonti esterne senza validazione può compromettere la sicurezza dell'intera applicazione web
+
+
+### Benefici della correzione
+
+- Verifica dell’integrità del codice servito
+- Riduzione del rischio di supply chain attacks
+- Conformità alle best practice CSP e sicurezza frontend
+
+
+## Vulnerabilità 2 – (Security Hotspot)
+
+### Logging non sicuro in ambienti di produzione
+
+In più punti del codice Java (es. `BookServiceImpl.java`)
+
+**Prima:**
+```java
+e.printStackTrace();
+```
+
+**Dopo:**
+```java
+LOGGER.log(Level.SEVERE, "Errore", e);
+```
+### Problema
+
+`printStackTrace()` stampa direttamente su `System.err`, risultando in:
+
+- Log non filtrati  
+- Informazioni sensibili esposte (query SQL, percorsi, configurazioni)  
+- Difficoltà di gestione centralizzata dei log
+
+---
+
+### Rischi
+
+- Esposizione di **stack trace completi**
+- Violazione del principio di **least information exposure**
+- Possibilità di **information leakage** su ambienti condivisi
+
+---
+
+### Correzione
+
+Utilizzare un sistema di logging strutturato come **SLF4J** con **Logback**, ad esempio:
+
+```java
+LOGGER.error("Error updating book: {}", book.getBarcode(), e);
+```
+
+### Vantaggi
+
+- Nessuna concatenazione di stringhe inutile  
+- Nessun rischio di logging verboso e non controllato  
+- Permette di configurare i **livelli di log** via `logback.xml`
+
+
+### Benefici
+
+- Log **professionale** e gestito correttamente  
+- Evita **fughe di dati** nei log di produzione  
+
+
