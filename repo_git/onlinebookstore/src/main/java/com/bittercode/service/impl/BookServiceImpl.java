@@ -6,8 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import com.bittercode.constant.ResponseCode;
 import com.bittercode.constant.db.BooksDBConstants;
@@ -18,7 +19,7 @@ import com.bittercode.util.DBUtil;
 
 public class BookServiceImpl implements BookService {
 
-    private static final Logger LOGGER = Logger.getLogger(BookServiceImpl.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(BookServiceImpl.class);
 
     private static final String SELECT_ALL_FROM = "SELECT * FROM ";
     private static final String SQL_WHERE = " WHERE ";
@@ -98,9 +99,7 @@ public class BookServiceImpl implements BookService {
                 response = ResponseCode.SUCCESS.name();
             }
         } catch (Exception e) {
-            if (LOGGER.isLoggable(Level.SEVERE)) {
-                LOGGER.log(Level.SEVERE, "Error deleting book with ID: " + bookId, e);
-            }
+            LOGGER.error("Error deleting book with ID: {}", bookId, e);
             response += " : " + e.getMessage();
         }
 
@@ -123,9 +122,7 @@ public class BookServiceImpl implements BookService {
                 responseCode = ResponseCode.SUCCESS.name();
             }
         } catch (Exception e) {
-            if (LOGGER.isLoggable(Level.SEVERE)) {
-                LOGGER.log(Level.SEVERE, "Error adding book: " + book.getName() + ", barcode: " + book.getBarcode(), e);
-            }
+            LOGGER.error("Error adding book: {}, barcode: {}", book.getName(), book.getBarcode(), e);
             responseCode += " : " + e.getMessage();
         }
 
@@ -143,9 +140,7 @@ public class BookServiceImpl implements BookService {
             ps.executeUpdate();
             responseCode = ResponseCode.SUCCESS.name();
         } catch (Exception e) {
-            if (LOGGER.isLoggable(Level.SEVERE)) {
-                LOGGER.log(Level.SEVERE, "Error updating quantity for book ID: " + bookId, e);
-            }
+            LOGGER.error("Error updating quantity for book ID: {}", bookId, e);
             responseCode += " : " + e.getMessage();
         }
 
@@ -200,9 +195,7 @@ public class BookServiceImpl implements BookService {
             ps.executeUpdate();
             responseCode = ResponseCode.SUCCESS.name();
         } catch (Exception e) {
-            if (LOGGER.isLoggable(Level.SEVERE)) {
-                LOGGER.log(Level.SEVERE, "Error updating book: " + book.getBarcode(), e);
-            }
+            LOGGER.error("Error updating book: {}", book.getBarcode(), e);
             responseCode += " : " + e.getMessage();
         }
 

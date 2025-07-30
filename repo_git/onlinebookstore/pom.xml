@@ -6,9 +6,9 @@
 	<artifactId>onlinebookstore</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<properties>
-	<sonar.coverage.jacoco.xmlReportPaths>
-		target/site/jacoco/jacoco.xml
-	</sonar.coverage.jacoco.xmlReportPaths>
+		<sonar.coverage.jacoco.xmlReportPaths>
+			target/site/jacoco/jacoco.xml
+		</sonar.coverage.jacoco.xmlReportPaths>
 	</properties>
 	<packaging>war</packaging>
 	<build>
@@ -54,30 +54,30 @@
 				</configuration>
 			</plugin>
 			<plugin>
-			<groupId>org.jacoco</groupId>
-			<artifactId>jacoco-maven-plugin</artifactId>
-			<version>0.8.11</version>
-			<executions>
-				<execution>
-				<id>prepare-agent</id>
-				<goals>
-					<goal>prepare-agent</goal>
-				</goals>
-				</execution>
-				<execution>
-				<id>report</id>
-				<phase>verify</phase>
-				<goals>
-					<goal>report</goal>
-				</goals>
-				<configuration>
-					<outputDirectory>${project.build.directory}/site/jacoco</outputDirectory>
-					<reports>
-					<report>xml</report>
-					</reports>
-				</configuration>
-				</execution>
-			</executions>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.11</version>
+				<executions>
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/site/jacoco</outputDirectory>
+							<reports>
+								<report>xml</report>
+							</reports>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.owasp</groupId>
@@ -85,9 +85,9 @@
 				<version>12.1.0</version>
 				<executions>
 					<execution>
-					<goals>
-						<goal>check</goal>
-					</goals>
+						<goals>
+							<goal>check</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>
@@ -102,9 +102,9 @@
 				<version>3.1.2</version>
 				<configuration>
 					<systemPropertyVariables>
-					<test.env>true</test.env>
-					<test.db.user>sa</test.db.user>
-					<test.db.pass>P@ssw0rdTest123!</test.db.pass>
+						<test.env>true</test.env>
+						<test.db.user>sa</test.db.user>
+						<test.db.pass>P@ssw0rdTest123!</test.db.pass>
 					</systemPropertyVariables>
 				</configuration>
 			</plugin>
@@ -158,6 +158,17 @@
 			<artifactId>mockito-inline</artifactId>
 			<version>5.2.0</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>2.0.12</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.4.14</version>
 		</dependency>
 	</dependencies>
 </project>
