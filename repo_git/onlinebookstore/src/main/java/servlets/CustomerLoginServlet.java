@@ -2,7 +2,8 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -18,7 +19,7 @@ import com.bittercode.service.impl.UserServiceImpl;
 
 public class CustomerLoginServlet extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(CustomerLoginServlet.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(CustomerLoginServlet.class);
     private final UserService authService = new UserServiceImpl();
 
     @Override
@@ -27,7 +28,7 @@ public class CustomerLoginServlet extends HttpServlet {
         try {
             pw = res.getWriter();
         } catch (IOException e) {
-            logger.severe("Failed to obtain response writer: " + e.getMessage());
+            logger.error("Failed to obtain response writer: {}", e.getMessage(), e);
             return;
         }
 
@@ -40,13 +41,13 @@ public class CustomerLoginServlet extends HttpServlet {
         try {
             user = authService.login(UserRole.CUSTOMER, uName, pWord, req.getSession());
         } catch (StoreException e) {
-            logger.severe("StoreException during login: " + e.getMessage());
+            logger.error("StoreException during login: {}", e.getMessage(), e);
             try {
                 RequestDispatcher rd = req.getRequestDispatcher("CustomerLogin.html");
                 rd.include(req, res);
                 pw.println("<table class=\"tab\"><tr><td>Internal error occurred. Please try again later.</td></tr></table>");
             } catch (ServletException | IOException ex) {
-                logger.severe("Error including login page after StoreException: " + ex.getMessage());
+                logger.error("Error including login page after StoreException: {}", ex.getMessage(), ex);
             }
             return;
         }
@@ -66,7 +67,7 @@ public class CustomerLoginServlet extends HttpServlet {
                 pw.println("<table class=\"tab\"><tr><td>Incorrect UserName or PassWord</td></tr></table>");
             }
         } catch (Exception e) {
-            logger.severe("Unexpected error while handling login response: " + e.getMessage());
+            logger.error("Unexpected error while handling login response: {}", e.getMessage(), e);
         }
     }
 }

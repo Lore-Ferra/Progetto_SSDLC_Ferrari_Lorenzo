@@ -3,8 +3,8 @@ package servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -22,7 +22,7 @@ import com.bittercode.util.StoreUtil;
 public class ViewBookServlet extends HttpServlet {
 
 
-    private static final Logger LOGGER = Logger.getLogger(ViewBookServlet.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ViewBookServlet.class);
     private final BookService bookService;
 
     public ViewBookServlet() {
@@ -87,7 +87,7 @@ public class ViewBookServlet extends HttpServlet {
                     + "    </div>");
 
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error while processing ViewBookServlet: " + e.getMessage());
+            LOGGER.error("Error while processing ViewBookServlet: {}", e.getMessage(), e);
         }
     }
 

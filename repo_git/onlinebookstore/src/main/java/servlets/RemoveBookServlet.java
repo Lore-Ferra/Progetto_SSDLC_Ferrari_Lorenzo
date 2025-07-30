@@ -2,8 +2,8 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -19,7 +19,7 @@ import com.bittercode.util.StoreUtil;
 
 public class RemoveBookServlet extends HttpServlet {
 
-    private static final Logger LOGGER = Logger.getLogger(RemoveBookServlet.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(RemoveBookServlet.class);
 
     private static final BookService bookService = new BookServiceImpl();
 
@@ -62,7 +62,7 @@ public class RemoveBookServlet extends HttpServlet {
             }
             pw.println("</div>");
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error while processing RemoveBookServlet: " + e.getMessage());
+            LOGGER.error("Error while processing RemoveBookServlet: {}", e.getMessage(), e);
             pw.println("<table class=\"tab\"><tr><td>Failed to Remove Books! Try Again</td></tr></table>");
         }
     }

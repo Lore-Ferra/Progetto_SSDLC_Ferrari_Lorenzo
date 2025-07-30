@@ -3,8 +3,8 @@ package servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -21,8 +21,8 @@ import com.bittercode.util.StoreUtil;
 
 public class ReceiptServlet extends HttpServlet {
 
-    private static final Logger LOGGER = Logger.getLogger(ReceiptServlet.class.getName());
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReceiptServlet.class);
+
     private final BookService bookService;
 
     public ReceiptServlet() {
@@ -70,7 +70,7 @@ public class ReceiptServlet extends HttpServlet {
             }
             pw.println("</table><br/><div class='tab'>Total Paid Amount: " + total + "</div>");
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error while processing ReceiptServlet: " + e.getMessage());
+            LOGGER.error("Error while processing ReceiptServlet: {}", e.getMessage(), e);
             pw.println("<div class='tab'>Error processing your request. Please try again later.</div>");
         } finally {
             pw.println("</div>");
@@ -103,14 +103,14 @@ public class ReceiptServlet extends HttpServlet {
 
 
                 int updatedQty = book.getQuantity() - quantity;
-                if (LOGGER.isLoggable(Level.INFO)) {
-                    LOGGER.info(String.format("Updated quantity: %d", updatedQty));
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Updated quantity: {}", updatedQty);
                 }
                 bookService.updateBookQtyById(book.getBarcode(), updatedQty);
                 return amount;
             }
         } catch (Exception e) {
-            LOGGER.severe("Errore nel processOrder: " + e.getMessage());
+            LOGGER.error("Errore nel processOrder: {}", e.getMessage(), e);
         }
         return 0.0;
     }

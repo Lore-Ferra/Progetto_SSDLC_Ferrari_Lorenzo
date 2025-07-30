@@ -4,10 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bittercode.constant.ResponseCode;
 import com.bittercode.constant.db.UsersDBConstants;
@@ -19,7 +19,7 @@ import com.bittercode.util.DBUtil;
 
 public class UserServiceImpl implements UserService {
 
-    private static final Logger LOGGER = Logger.getLogger(UserServiceImpl.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private static final String REGISTER_USER_QUERY = "INSERT INTO " + UsersDBConstants.TABLE_USERS
             + " VALUES(?,?,?,?,?,?,?,?)";
@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error during login for user: " + email + " with role: " + role, e);
+            LOGGER.error("Error during login for user: {} with role: {}", email, role, e);
         }
         return user;
     }
@@ -101,7 +101,7 @@ public class UserServiceImpl implements UserService {
             } else {
                 responseMessage += " : " + e.getMessage();
             }
-            LOGGER.log(Level.SEVERE, "Error registering user: " + user.getEmailId() + " as " + role, e);
+            LOGGER.error("Error registering user: {} as {}", user.getEmailId(), role, e);
         }
 
         return responseMessage;
