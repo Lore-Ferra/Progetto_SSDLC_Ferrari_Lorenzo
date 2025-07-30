@@ -2,6 +2,8 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -19,6 +21,8 @@ import com.bittercode.service.impl.BookServiceImpl;
 import com.bittercode.util.StoreUtil;
 
 public class UpdateBookServlet extends HttpServlet {
+
+    private static final Logger LOGGER = Logger.getLogger(UpdateBookServlet.class.getName());
     private final BookService bookService;
 
     public UpdateBookServlet() {
@@ -78,7 +82,7 @@ public class UpdateBookServlet extends HttpServlet {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error while processing UpdateBookServlet: " + e.getMessage());
             pw.println("<table class=\"tab\"><tr><td>Failed to Load Book data!!</td></tr></table>");
         }
     }

@@ -3,6 +3,8 @@ package servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -17,6 +19,8 @@ import com.bittercode.service.impl.BookServiceImpl;
 import com.bittercode.util.StoreUtil;
 
 public class StoreBookServlet extends HttpServlet {
+
+    private static final Logger LOGGER = Logger.getLogger(StoreBookServlet.class.getName());
 
     private final BookService bookService;
 
@@ -75,7 +79,7 @@ public class StoreBookServlet extends HttpServlet {
                     + "</table></div>");
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error while loading books in StoreBookServlet", e);
             pw.println("<div id='topmid' style='background-color:grey'>Books Available In the Store</div>");
             pw.println("<table class=\"table table-hover\" style='background-color:white'>");
             pw.println("    <tr><td colspan='6'>Could not load books due to an internal error.</td></tr>");

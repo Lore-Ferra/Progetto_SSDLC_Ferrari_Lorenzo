@@ -21,7 +21,7 @@ import com.bittercode.service.impl.UserServiceImpl;
 
 public class CustomerRegisterServlet extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(CustomerRegisterServlet.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CustomerRegisterServlet.class.getName());
     private static UserService userService = new UserServiceImpl();
 
     public static void setUserService(UserService service) {
@@ -48,7 +48,7 @@ public class CustomerRegisterServlet extends HttpServlet {
         user.setAddress(addr);
         try {
             String respCode = userService.register(UserRole.CUSTOMER, user);
-            logger.log(Level.INFO, "Registration response: {0}", respCode);
+            LOGGER.log(Level.INFO, "Registration response: {0}", respCode);
             if (ResponseCode.SUCCESS.name().equalsIgnoreCase(respCode)) {
                 RequestDispatcher rd = req.getRequestDispatcher("CustomerLogin.html");
                 rd.include(req, res);
@@ -60,7 +60,7 @@ public class CustomerRegisterServlet extends HttpServlet {
                 pw.println("Sorry for interruption! Try again");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error while processing CustomerRegisterServlet: " + e.getMessage());
         }
     }
 }

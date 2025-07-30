@@ -21,7 +21,7 @@ import com.bittercode.util.StoreUtil;
 
 public class ReceiptServlet extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(ReceiptServlet.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ReceiptServlet.class.getName());
     
     private final BookService bookService;
 
@@ -70,7 +70,11 @@ public class ReceiptServlet extends HttpServlet {
             }
             pw.println("</table><br/><div class='tab'>Total Paid Amount: " + total + "</div>");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error while processing ReceiptServlet: " + e.getMessage());
+            pw.println("<div class='tab'>Error processing your request. Please try again later.</div>");
+        } finally {
+            pw.println("</div>");
+            pw.close();
         }
     }
 
@@ -99,14 +103,14 @@ public class ReceiptServlet extends HttpServlet {
 
 
                 int updatedQty = book.getQuantity() - quantity;
-                if (logger.isLoggable(Level.INFO)) {
-                    logger.info(String.format("Updated quantity: %d", updatedQty));
+                if (LOGGER.isLoggable(Level.INFO)) {
+                    LOGGER.info(String.format("Updated quantity: %d", updatedQty));
                 }
                 bookService.updateBookQtyById(book.getBarcode(), updatedQty);
                 return amount;
             }
         } catch (Exception e) {
-            logger.severe("Errore nel processOrder: " + e.getMessage());
+            LOGGER.severe("Errore nel processOrder: " + e.getMessage());
         }
         return 0.0;
     }

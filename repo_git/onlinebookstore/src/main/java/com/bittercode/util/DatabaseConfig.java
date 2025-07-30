@@ -3,8 +3,12 @@ package com.bittercode.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 class DatabaseConfig {
+
+    private static final Logger LOGGER = Logger.getLogger(DatabaseConfig.class.getName());
 
     private DatabaseConfig() {
         // Prevent instantiation
@@ -19,7 +23,7 @@ class DatabaseConfig {
         try {
             prop.load(input);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error loading database properties", e);
         }
     }
 

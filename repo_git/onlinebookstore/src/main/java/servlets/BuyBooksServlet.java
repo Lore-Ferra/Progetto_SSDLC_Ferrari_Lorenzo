@@ -3,6 +3,7 @@ package servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -19,7 +20,7 @@ import com.bittercode.util.StoreUtil;
 
 public class BuyBooksServlet extends HttpServlet {
 
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(BuyBooksServlet.class.getName());
+    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(BuyBooksServlet.class.getName());
     private final BookService bookService;
     private static final String TD_CLOSE = "</td>";
 
@@ -45,7 +46,7 @@ public class BuyBooksServlet extends HttpServlet {
             showBooksToCustomer(req, res, pw);
 
         } catch (IOException e) {
-            logger.severe("Error while processing BuyBooksServlet: " + e.getMessage());
+            LOGGER.severe("Error while processing BuyBooksServlet: " + e.getMessage());
         }
     }
 
@@ -54,7 +55,7 @@ public class BuyBooksServlet extends HttpServlet {
             RequestDispatcher rd = req.getRequestDispatcher("CustomerLogin.html");
             rd.include(req, res);
         } catch (IOException | ServletException e) {
-            logger.severe("Error while processing BuyBooksServlet: " + e.getMessage());
+            LOGGER.severe("Error while processing BuyBooksServlet: " + e.getMessage());
         }
 
         pw.println("<table class=\"tab\"><tr><td>Please Login First to Continue!!</td></tr></table>");
@@ -94,7 +95,7 @@ public class BuyBooksServlet extends HttpServlet {
             pw.println("</table><input type=\"submit\" value=\" PAY NOW \"><br/></form></div>");
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error while showing books to customer", e);
         }
     }
 }

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -22,6 +24,7 @@ import com.bittercode.util.StoreUtil;
 
 public class CartServlet extends HttpServlet {
 
+    private static final Logger LOGGER = Logger.getLogger(CartServlet.class.getName());
     private static BookService bookService = new BookServiceImpl();
 
     @Override
@@ -104,7 +107,7 @@ public class CartServlet extends HttpServlet {
                         + "    </div>");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error while processing CartServlet: " + e.getMessage());
         }
     }
 
