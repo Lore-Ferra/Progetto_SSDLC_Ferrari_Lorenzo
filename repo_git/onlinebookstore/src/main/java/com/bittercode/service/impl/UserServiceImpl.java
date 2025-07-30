@@ -71,9 +71,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public String register(UserRole role, User user) throws StoreException {
         String responseMessage = ResponseCode.FAILURE.name();
-        Connection con = DBUtil.getConnection();
-        try {
-            PreparedStatement ps = con.prepareStatement(REGISTER_USER_QUERY);
+
+        try (Connection con = DBUtil.getConnection();
+                PreparedStatement ps = con.prepareStatement(REGISTER_USER_QUERY)) {
+
             ps.setString(1, user.getEmailId());
             ps.setString(2, user.getPassword());
             ps.setString(3, user.getFirstName());
@@ -81,19 +82,22 @@ public class UserServiceImpl implements UserService {
             ps.setString(5, user.getAddress());
             ps.setLong(6, user.getPhone());
             ps.setString(7, user.getEmailId());
+
             int userType = UserRole.SELLER.equals(role) ? 1 : 2;
             ps.setInt(8, userType);
+
             int k = ps.executeUpdate();
             if (k == 1) {
                 responseMessage = ResponseCode.SUCCESS.name();
             }
-        } catch (Exception e) {
+
+        } catch (SQLException e) {
             responseMessage += " : " + e.getMessage();
-            if (responseMessage.contains("Duplicate"))
+            if (responseMessage.contains("Duplicate")) {
                 responseMessage = "User already registered with this email !!";
+            }
             e.printStackTrace();
         }
         return responseMessage;
     }
-
 }
