@@ -2,8 +2,8 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -21,7 +21,7 @@ import com.bittercode.service.impl.UserServiceImpl;
 
 public class CustomerRegisterServlet extends HttpServlet {
 
-    private static final Logger LOGGER = Logger.getLogger(CustomerRegisterServlet.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomerRegisterServlet.class);
     private static UserService userService = new UserServiceImpl();
 
     public static void setUserService(UserService service) {
@@ -48,7 +48,7 @@ public class CustomerRegisterServlet extends HttpServlet {
         user.setAddress(addr);
         try {
             String respCode = userService.register(UserRole.CUSTOMER, user);
-            LOGGER.log(Level.INFO, "Registration response: {0}", respCode);
+            LOGGER.info("Response code from registration: {}", respCode);
             if (ResponseCode.SUCCESS.name().equalsIgnoreCase(respCode)) {
                 RequestDispatcher rd = req.getRequestDispatcher("CustomerLogin.html");
                 rd.include(req, res);
@@ -60,7 +60,7 @@ public class CustomerRegisterServlet extends HttpServlet {
                 pw.println("Sorry for interruption! Try again");
             }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error while processing CustomerRegisterServlet: " + e.getMessage());
+            LOGGER.error("Error while processing CustomerRegisterServlet: {}", e.getMessage(), e);
         }
     }
 }
