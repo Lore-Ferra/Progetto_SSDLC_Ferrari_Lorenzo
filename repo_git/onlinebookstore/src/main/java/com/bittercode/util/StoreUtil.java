@@ -39,48 +39,53 @@ public class StoreUtil {
      * Add/Remove/Update Item in the cart using the session
      */
     public static void updateCartItems(HttpServletRequest req) {
+        final String ITEMS_KEY = "items";
         String selectedBookId = req.getParameter("selectedBookId");
         HttpSession session = req.getSession();
-        if (selectedBookId != null) { // add item to the cart
 
-            // Items will contain comma separated bookIds that needs to be added in the cart
-            String items = (String) session.getAttribute("items");
-            if (req.getParameter("addToCart") != null) { // add to cart
-                if (items == null || items.isEmpty())
-                    items = selectedBookId;
-                else if (!items.contains(selectedBookId))
-                    items = items + "," + selectedBookId; // if items already contains bookId, don't add it
+        if (selectedBookId == null)
+            return;
 
-                // set the items in the session to be used later
-                session.setAttribute("items", items);
+        boolean isAdd = req.getParameter("addToCart") != null;
+        String items = (String) session.getAttribute(ITEMS_KEY);
 
-                /*
-                 * Quantity of each item in the cart will be stored in the session as:
-                 * Prefixed with qty_ following its bookId
-                 * For example 2 no. of book with id 'myBook' in the cart will be
-                 * added to the session as qty_myBook=2
-                 */
-                int itemQty = 0;
-                if (session.getAttribute("qty_" + selectedBookId) != null)
-                    itemQty = (int) session.getAttribute("qty_" + selectedBookId);
-                itemQty += 1;
-                session.setAttribute("qty_" + selectedBookId, itemQty);
-            } else { // remove from the cart
-                int itemQty = 0;
-                if (session.getAttribute("qty_" + selectedBookId) != null)
-                    itemQty = (int) session.getAttribute("qty_" + selectedBookId);
-                if (itemQty > 1) {
-                    itemQty--;
-                    session.setAttribute("qty_" + selectedBookId, itemQty);
-                } else {
-                    session.removeAttribute("qty_" + selectedBookId);
-                    items = items.replace(selectedBookId + ",", "");
-                    items = items.replace("," + selectedBookId, "");
-                    items = items.replace(selectedBookId, "");
-                    session.setAttribute("items", items);
-                }
+        if (isAdd) {
+            items = addItemToCart(items, selectedBookId);
+            session.setAttribute(ITEMS_KEY, items);
+            int qty = getQuantity(session, selectedBookId) + 1;
+            session.setAttribute("qty_" + selectedBookId, qty);
+        } else {
+            int qty = getQuantity(session, selectedBookId);
+            if (qty > 1) {
+                session.setAttribute("qty_" + selectedBookId, qty - 1);
+            } else {
+                session.removeAttribute("qty_" + selectedBookId);
+                items = removeItemFromCart(items, selectedBookId);
+                session.setAttribute(ITEMS_KEY, items);
             }
         }
-
     }
+
+    private static int getQuantity(HttpSession session, String bookId) {
+        Object qtyObj = session.getAttribute("qty_" + bookId);
+        return (qtyObj instanceof Integer) ? (int) qtyObj : 0;
+    }
+
+    private static String addItemToCart(String items, String bookId) {
+        if (items == null || items.isEmpty())
+            return bookId;
+        if (!items.contains(bookId))
+            return items + "," + bookId;
+        return items;
+    }
+
+    private static String removeItemFromCart(String items, String bookId) {
+        if (items == null)
+            return null;
+        items = items.replace(bookId + ",", "")
+                .replace("," + bookId, "")
+                .replace(bookId, "");
+        return items;
+    }
+
 }
