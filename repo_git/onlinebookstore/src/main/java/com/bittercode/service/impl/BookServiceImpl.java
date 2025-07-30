@@ -5,10 +5,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import com.bittercode.constant.ResponseCode;
 import com.bittercode.constant.db.BooksDBConstants;
@@ -149,18 +150,30 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> getBooksByCommaSeparatedBookIds(String commaSeparatedBookIds) throws StoreException {
+        if (commaSeparatedBookIds == null || commaSeparatedBookIds.trim().isEmpty()) {
+            return Collections.emptyList();
+        }
+
         List<Book> books = new ArrayList<>();
-
-        Connection con = DBUtil.getConnection();
         String[] ids = commaSeparatedBookIds.split(",");
+        List<String> trimmedIds = Arrays.stream(ids)
+                .map(String::trim)
+                .filter(id -> !id.isEmpty())
+                .toList();
 
-        String placeholders = String.join(",", java.util.Collections.nCopies(ids.length, "?"));
+        if (trimmedIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        String placeholders = String.join(",", Collections.nCopies(trimmedIds.size(), "?"));
         String query = SELECT_ALL_FROM + BooksDBConstants.TABLE_BOOK + SQL_WHERE +
                 BooksDBConstants.COLUMN_BARCODE + " IN (" + placeholders + ")";
 
-        try (PreparedStatement ps = con.prepareStatement(query)) {
-            for (int i = 0; i < ids.length; i++) {
-                ps.setString(i + 1, ids[i].trim());
+        try (Connection con = DBUtil.getConnection();
+                PreparedStatement ps = con.prepareStatement(query)) {
+
+            for (int i = 0; i < trimmedIds.size(); i++) {
+                ps.setString(i + 1, trimmedIds.get(i));
             }
 
             try (ResultSet rs = ps.executeQuery()) {
@@ -174,8 +187,7 @@ public class BookServiceImpl implements BookService {
                 }
             }
         } catch (SQLException e) {
-            throw new StoreException(
-                    "Error retrieving books by IDs: " + commaSeparatedBookIds + ". Cause: " + e.getMessage());
+            throw new StoreException("Error retrieving books by IDs: " + commaSeparatedBookIds + ". Cause: " + e.getMessage());
         }
 
         return books;
