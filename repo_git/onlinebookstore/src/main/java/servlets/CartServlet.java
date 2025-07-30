@@ -53,7 +53,7 @@ public class CartServlet extends HttpServlet {
             StoreUtil.setActiveTab(pw, "cart");
 
             // Read the books from the database with the respective bookIds
-            List<Book> books = bookService.getBooksByCommaSeperatedBookIds(bookIds);
+            List<Book> books = bookService.getBooksByCommaSeparatedBookIds(bookIds);
             List<Cart> cartItems = new ArrayList<>();
             pw.println("<div id='topmid' style='background-color:grey'>Shopping Cart</div>");
             pw.println("<table class=\"table table-hover\" style='background-color:white'>\r\n"
