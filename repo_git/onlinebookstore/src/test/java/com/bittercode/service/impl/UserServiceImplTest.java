@@ -30,7 +30,7 @@ public class UserServiceImplTest {
                 "lastName VARCHAR(255)," +
                 "address VARCHAR(255)," +
                 "phone BIGINT," +
-                "email VARCHAR(255) UNIQUE," +
+                "mailid VARCHAR(255) UNIQUE," +
                 "usertype INT" +
                 ")");
     }
