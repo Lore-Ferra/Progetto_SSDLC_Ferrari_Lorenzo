@@ -27,7 +27,7 @@
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body onload="funload()">
+  <body>
     <div id="navbar-placeholder"></div>
     <div id="topmid"><h1>Welcome to Online Book Store</h1></div>
     <br />
@@ -41,7 +41,6 @@
         <tr>
           <td><a href="SellerLogin.html">Login As Admin</a></td>
         </tr>
-
         <tr>
           <td>
             <a href="CustomerLogin.html"> Login As<span> Customer</span></a>
@@ -52,30 +51,7 @@
         </tr>
       </tbody>
     </table>
-    <script>
-      // Preloder script
-      var tmp = document.getElementById("loding");
-      function funload() {
-        loding.style.display = "none";
-      }
-    </script>
     <div id="external-scripts"></div>
-    <script>
-      fetch("external-scripts.html")
-        .then((res) => res.text())
-        .then((data) => {
-          document.getElementById("external-scripts").innerHTML = data;
-        });
-    </script>
-    <script>
-      fetch("navbar.html")
-        .then((response) => response.text())
-        .then((data) => {
-          document.getElementById("navbar-placeholder").innerHTML = data;
-        })
-        .catch((error) =>
-          console.error("Errore nel caricamento della navbar:", error)
-        );
-    </script>
+    <script src="scripts/common.js"></script>
   </body>
 </html>
