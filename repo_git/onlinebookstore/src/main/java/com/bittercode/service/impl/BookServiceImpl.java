@@ -149,51 +149,49 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> getBooksByCommaSeparatedBookIds(String commaSeparatedBookIds) throws StoreException {
-        List<Book> books = new ArrayList<>();
+    List<Book> books = new ArrayList<>();
 
-        if (commaSeparatedBookIds == null || commaSeparatedBookIds.trim().isEmpty()) {
-            return books;
+    String[] ids = commaSeparatedBookIds.split(",");
+    for (String id : ids) {
+        if (!id.trim().matches("\\d+")) {
+            throw new StoreException("Invalid book ID format: " + id);
         }
+    }
 
-        String[] ids = commaSeparatedBookIds.split(",");
-
-        for (String id : ids) {
-            if (!id.trim().matches("\\d+")) {
-                LOGGER.warn("Invalid book ID format received: {}", id);
-                throw new StoreException("Invalid book ID format: " + id);
-            }
-        }
-
-        String placeholders = String.join(",", Collections.nCopies(ids.length, "?"));
-        String query = SELECT_ALL_FROM + BooksDBConstants.TABLE_BOOK +
-                SQL_WHERE + BooksDBConstants.COLUMN_BARCODE + " IN (" + placeholders + ")";
-
-        try (Connection con = DBUtil.getConnection();
-                PreparedStatement ps = con.prepareStatement(query)) {
-
-            for (int i = 0; i < ids.length; i++) {
-                ps.setString(i + 1, ids[i].trim());
-            }
-
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    String bCode = rs.getString(1);
-                    String bName = rs.getString(2);
-                    String bAuthor = rs.getString(3);
-                    int bPrice = rs.getInt(4);
-                    int bQty = rs.getInt(5);
-
-                    books.add(new Book(bCode, bName, bAuthor, bPrice, bQty));
-                }
-            }
-
-        } catch (SQLException e) {
-            LOGGER.error("Error in getBooksByCommaSeparatedBookIds for input: {}", commaSeparatedBookIds, e);
-            throw new StoreException(ResponseCode.DATABASE_CONNECTION_FAILURE);
-        }
-
+    if (ids.length == 0) {
         return books;
     }
+
+    String placeholders = String.join(",", Collections.nCopies(ids.length, "?"));
+    String query = SELECT_ALL_FROM + BooksDBConstants.TABLE_BOOK + SQL_WHERE +
+                   BooksDBConstants.COLUMN_BARCODE + " IN (" + placeholders + ")";
+
+    try (Connection con = DBUtil.getConnection();
+         PreparedStatement ps = con.prepareStatement(query)) {
+
+        for (int i = 0; i < ids.length; i++) {
+            ps.setString(i + 1, ids[i].trim());
+        }
+
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                String bCode = rs.getString(1);
+                String bName = rs.getString(2);
+                String bAuthor = rs.getString(3);
+                int bPrice = rs.getInt(4);
+                int bQty = rs.getInt(5);
+
+                books.add(new Book(bCode, bName, bAuthor, bPrice, bQty));
+            }
+        }
+
+    } catch (SQLException e) {
+            throw new StoreException("Error retrieving books by IDs: " + commaSeparatedBookIds + ". Cause: " + e.getMessage());
+    }
+
+    return books;
+}
+
 
     @Override
     public String updateBook(Book book) throws StoreException {
