@@ -68,7 +68,7 @@ class CartServletTest {
 
         Book book = new Book("B001", "Java Book", "Author", 100, 10);
         mockedBookService = mock(BookService.class);
-        when(mockedBookService.getBooksByCommaSeperatedBookIds("B001")).thenReturn(Collections.singletonList(book));
+        when(mockedBookService.getBooksByCommaSeparatedBookIds("B001")).thenReturn(Collections.singletonList(book));
 
         try (MockedStatic<StoreUtil> utilMock = mockStatic(StoreUtil.class)) {
             utilMock.when(() -> StoreUtil.isLoggedIn(UserRole.CUSTOMER, session)).thenReturn(true);
@@ -97,7 +97,7 @@ class CartServletTest {
         when(session.getAttribute("items")).thenReturn(""); // nessun libro
 
         mockedBookService = mock(BookService.class);
-        when(mockedBookService.getBooksByCommaSeperatedBookIds("")).thenReturn(Collections.emptyList());
+        when(mockedBookService.getBooksByCommaSeparatedBookIds("")).thenReturn(Collections.emptyList());
 
         try (MockedStatic<StoreUtil> utilMock = mockStatic(StoreUtil.class)) {
             utilMock.when(() -> StoreUtil.isLoggedIn(UserRole.CUSTOMER, session)).thenReturn(true);
