@@ -21,6 +21,8 @@ import com.bittercode.util.StoreUtil;
 
 public class ProcessPaymentServlet extends HttpServlet {
 
+    private static final String CART_ITEMS = "cartItems";
+
     private static BookService bookService = new BookServiceImpl();
 
     public static void setBookService(BookService service) {
@@ -48,8 +50,8 @@ public class ProcessPaymentServlet extends HttpServlet {
                     + "        <div class=\"card-columns\">");
             HttpSession session = req.getSession();
             List<Cart> cartItems = null;
-            if (session.getAttribute("cartItems") != null)
-                cartItems = (List<Cart>) session.getAttribute("cartItems");
+            if (session.getAttribute(CART_ITEMS) != null)
+                cartItems = (List<Cart>) session.getAttribute(CART_ITEMS);
             for (Cart cart : cartItems) {
                 Book book = cart.getBook();
                 double bPrice = book.getPrice();
@@ -64,7 +66,7 @@ public class ProcessPaymentServlet extends HttpServlet {
                 session.removeAttribute("qty_" + bCode);
             }
             session.removeAttribute("amountToPay");
-            session.removeAttribute("cartItems");
+            session.removeAttribute(CART_ITEMS);
             session.removeAttribute("items");
             session.removeAttribute("selectedBookId");
             pw.println("</div>\r\n"
