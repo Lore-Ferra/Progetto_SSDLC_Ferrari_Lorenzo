@@ -143,30 +143,37 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<Book> getBooksByCommaSeperatedBookIds(String commaSeperatedBookIds) throws StoreException {
+    public List<Book> getBooksByCommaSeparatedBookIds(String commaSeparatedBookIds) throws StoreException {
         List<Book> books = new ArrayList<>();
+
         Connection con = DBUtil.getConnection();
-        try {
-            String getBooksByCommaSeperatedBookIdsQuery = SELECT_ALL_FROM + BooksDBConstants.TABLE_BOOK
-                    + SQL_WHERE +
-                    BooksDBConstants.COLUMN_BARCODE + " IN ( " + commaSeperatedBookIds + " )";
-            PreparedStatement ps = con.prepareStatement(getBooksByCommaSeperatedBookIdsQuery);
-            ResultSet rs = ps.executeQuery();
+        String[] ids = commaSeparatedBookIds.split(",");
+        String placeholders = String.join(",", java.util.Collections.nCopies(ids.length, "?"));
+        String query = SELECT_ALL_FROM + BooksDBConstants.TABLE_BOOK + SQL_WHERE +
+                BooksDBConstants.COLUMN_BARCODE + " IN (" + placeholders + ")";
 
-            while (rs.next()) {
-                String bCode = rs.getString(1);
-                String bName = rs.getString(2);
-                String bAuthor = rs.getString(3);
-                int bPrice = rs.getInt(4);
-                int bQty = rs.getInt(5);
+        try (PreparedStatement ps = con.prepareStatement(query)) {
+            for (int i = 0; i < ids.length; i++) {
+                ps.setString(i + 1, ids[i].trim());
+            }
 
-                Book book = new Book(bCode, bName, bAuthor, bPrice, bQty);
-                books.add(book);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String bCode = rs.getString(1);
+                    String bName = rs.getString(2);
+                    String bAuthor = rs.getString(3);
+                    int bPrice = rs.getInt(4);
+                    int bQty = rs.getInt(5);
+
+                    Book book = new Book(bCode, bName, bAuthor, bPrice, bQty);
+                    books.add(book);
+                }
             }
         } catch (SQLException e) {
             throw new StoreException(
-                    "Error retrieving books by IDs: " + commaSeperatedBookIds + ". Cause: " + e.getMessage());
+                    "Error retrieving books by IDs: " + commaSeparatedBookIds + ". Cause: " + e.getMessage());
         }
+
         return books;
     }
 
