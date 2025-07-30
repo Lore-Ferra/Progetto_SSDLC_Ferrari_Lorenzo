@@ -39,15 +39,16 @@ La pipeline automatizza le seguenti fasi (in evoluzione):
 
 Durante la scansione delle librerie di terze parti tramite OWASP Dependency Check, sono state rilevate vulnerabilità critiche o alte in alcune dipendenze. Di seguito sono elencate le modifiche apportate rispetto alla versione originale del progetto.
 
-| Libreria               | Versione originale | Nuova versione | Vulnerabilità rilevate | Azione     | Motivazione della modifica                                                                                                              |
-| ---------------------- | ------------------ | -------------- | ---------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `mysql-connector-java` | 8.0.28             | 9.3.0          | CVE-2021-2471          | Aggiornata | La versione 8.0.28 presenta almeno 2 vulnerabilità note, tra cui una che consente accesso non autorizzato ai metadati del database.     |
-| `postgresql`           | 42.3.7             | 42.7.7         | CVE-2022-21724         | Aggiornata | La versione 42.3.7 era affetta da una vulnerabilità che poteva portare a denial of service o crash in specifiche condizioni di parsing. |
-| `javax.servlet-api`    | 3.1.0              | 4.0.1          | CVE-2020-11996         | Aggiornata | La versione 3.1.0 è affetta da una vulnerabilità DoS tramite richieste asincrone non gestite correttamente.                             |
-| `junit-jupiter`        | Non presente       | 5.10.2         | -                      | Aggiunta   | Inserita per eseguire test moderni con supporto a JUnit 5. Nessuna CVE nota.                                                            |
-| `mockito-core`         | Non presente       | 5.12.0         | -                      | Aggiunta   | Necessario per unit test e mocking. Versione aggiornata per evitare bug o falle nelle API di test.                                      |
-| `h2`                   | Non presente       | 2.2.224        | -                      | Aggiunta   | Usata per test database in memoria. Ultima versione stabile, priva di CVE rilevate.                                                     |
-| `mockito-inline`       | Non presente       | 5.2.0          | -                      | Aggiunta   | Inserita per abilitare il mocking di metodi statici nel codice di test. Nessuna vulnerabilità nota.                                     |
+| Libreria               | Versione originale | Nuova versione | Vulnerabilità rilevate         | Azione     | Motivazione della modifica                                                                                                 |
+| ---------------------- | ------------------ | -------------- | ------------------------------ | ---------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `mysql-connector-java` | 8.0.28             | 9.3.0          | CVE-2021-2471                  | Aggiornata | La versione 8.0.28 presenta vulnerabilità note, inclusa una che consente accesso non autorizzato ai metadati del database. |
+| `postgresql`           | 42.3.7             | 42.7.7         | CVE-2022-21724                 | Aggiornata | La versione 42.3.7 era affetta da una vulnerabilità che poteva portare a DoS in condizioni particolari.                    |
+| `javax.servlet-api`    | 3.1.0              | 4.0.1          | CVE-2020-11996                 | Aggiornata | La versione 3.1.0 soffriva di un potenziale DoS tramite gestione asincrona errata.                                         |
+| `logback-core`         | 1.4.14             | 1.5.18         | CVE-2024-12798, CVE-2024-12801 | Aggiornata | La versione 1.4.14 permetteva l'esecuzione di codice via configurazione maliziosa e attacchi SSRF.                         |
+| `junit-jupiter`        | Non presente       | 5.10.2         | -                              | Aggiunta   | Aggiunta per supporto a JUnit 5 e test moderni. Nessuna vulnerabilità nota.                                                |
+| `mockito-core`         | Non presente       | 5.12.0         | -                              | Aggiunta   | Necessaria per unit test con mocking. Versione stabile e aggiornata.                                                       |
+| `mockito-inline`       | Non presente       | 5.2.0          | -                              | Aggiunta   | Aggiunta per supporto al mocking di metodi statici. Nessuna CVE nota.                                                      |
+| `h2`                   | Non presente       | 2.2.224        | -                              | Aggiunta   | Usata nei test come database in-memory. Ultima versione stabile, priva di vulnerabilità note.                              |
 
 Tutte le modifiche sono state verificate tramite build Jenkins e analisi statica con SonarQube. Dopo ogni aggiornamento, è stato eseguito un nuovo ciclo di test e controllo dei Quality Gate.
 
@@ -223,7 +224,6 @@ L'annotazione `@Override` è essenziale per garantire che un metodo stia effetti
 - Favorisce l'integrazione con strumenti come **SonarQube**, **IDE**, **CI/CD**
 - Rende il comportamento della servlet **più prevedibile e corretto**
 
-
 ## Vulnerabilità 5 – (Medium)
 
 In alcune servlet, come `ErrorHandlerServlet`, veniva utilizzato `System.out.println(...)` per la stampa di messaggi diagnostici e di errore.
@@ -291,7 +291,6 @@ L’uso del logger standard (`java.util.logging.Logger`) permette invece di:
 - Codice più professionale e pronto per la produzione
 - Separazione delle responsabilità tra log e output standard
 
-
 ## Vulnerabilità 6 – (High)
 
 Nel progetto era presente un’interfaccia `BookStoreConstants` utilizzata impropriamente per la dichiarazione di costanti:
@@ -305,6 +304,7 @@ public interface BookStoreConstants {
     public static String CONTENT_TYPE_TEXT_HTML = "text/html";
 }
 ```
+
 **Dopo:**
 
 ```java
@@ -326,15 +326,16 @@ Utilizzare un’interfaccia per definire costanti (`constant interface pattern`)
 - Viola l’incapsulamento e la responsabilità singola di un’interfaccia
 - Espone dettagli implementativi a tutte le classi che la "implementano"
 - Aggiunge vincoli inutili all’ereditarietà (le classi diventano legate a quell’interfaccia)
-- È una pratica deprecata secondo gli standard Java (vedi *Effective Java* di Joshua Bloch)
+- È una pratica deprecata secondo gli standard Java (vedi _Effective Java_ di Joshua Bloch)
 
 La soluzione corretta è spostare le costanti in una **classe `final` con costruttore privato**, impedendone l’istanza e rispettando il principio di responsabilità singola.
 
 ### Classificazione OWASP
 
 - **Categoria:**
+
   - A06 – Vulnerable and Outdated Components
-  - A07 – Identification and Authentication Failures *(indirettamente, per perdita di chiarezza nei componenti)*
+  - A07 – Identification and Authentication Failures _(indirettamente, per perdita di chiarezza nei componenti)_
 
 - **Gravità:** Alta (High)
 
@@ -351,7 +352,6 @@ La soluzione corretta è spostare le costanti in una **classe `final` con costru
 - Miglioramento della sicurezza e della chiarezza architetturale
 - Conformità agli standard di sviluppo Java professionale
 
-
 ## Vulnerabilità 7 – (High)
 
 Nel file `BookServiceImpl.java` erano presenti diverse costanti `static final` che **non rispettavano la convenzione di naming** prevista dagli standard Java e inoltre veniva utilizzato in modo scorretto `SELECT *`, racchiuso nella costante `SELECT_ALL_FROM`.
@@ -359,6 +359,7 @@ Nel file `BookServiceImpl.java` erano presenti diverse costanti `static final` c
 ### Esempi di codice corretto e scorretto
 
 **Prima:**
+
 ```java
 private static final String SELECT_ALL_FROM = "SELECT * FROM ";
 private static final String getBooksByCommaSeperatedBookIdsQuery = SELECT_ALL_FROM + BooksDBConstants.TABLE_BOOK + " ...";
@@ -366,6 +367,7 @@ private static final String updateBookQtyByIdQuery = "UPDATE ...";
 ```
 
 **Dopo:**
+
 ```java
 private static final String SELECT_BOOK_FIELDS = "SELECT barcode, name, author, price, quantity FROM ";
 private static final String GET_BOOKS_BY_COMMA_SEPARATED_BOOK_IDS_QUERY = SELECT_BOOK_FIELDS + BooksDBConstants.TABLE_BOOK + " ...";
@@ -379,7 +381,6 @@ private static final String UPDATE_BOOK_QTY_BY_ID_QUERY = "UPDATE ...";
 Le costanti `static final` devono seguire il formato **SNAKE_CASE** (maiuscole con underscore), secondo la seguente espressione regolare:
 
 `^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$`
-
 
 Non rispettare questa convenzione comporta:
 
@@ -397,12 +398,12 @@ Anche se racchiuso in una costante, l'uso di `SELECT *`:
 - Introduce problemi di performance e ambiguità
 - Espone potenzialmente più dati del necessario, violando il principio del **least privilege**
 
-
 ### Classificazione OWASP
 
 - **Categoria:**
+
   - A06 – Vulnerable and Outdated Components
-  - A05 – Security Misconfiguration *(per l'utilizzo di query SQL non ottimizzate)*
+  - A05 – Security Misconfiguration _(per l'utilizzo di query SQL non ottimizzate)_
 
 - **Gravità:** Alta (High)
 
@@ -411,7 +412,6 @@ Anche se racchiuso in una costante, l'uso di `SELECT *`:
   - Query inefficienti
   - Errori futuri difficili da diagnosticare
 
-
 ### Benefici della correzione
 
 - Rispetto delle naming convention Java
@@ -419,7 +419,6 @@ Anche se racchiuso in una costante, l'uso di `SELECT *`:
 - Codice più leggibile e conforme agli standard aziendali
 - Riduzione dei warning nei sistemi CI/CD
 - Migliore controllo sui dati restituiti dalle query
-
 
 ## Vulnerabilità 8 – (High)
 
@@ -439,6 +438,7 @@ In vari metodi della classe `BookServiceImpl` venivano utilizzati oggetti `Prepa
 ---
 
 **Prima:**
+
 ```java
 PreparedStatement ps = con.prepareStatement(UPDATE_BOOK_BY_ID_QUERY);
 ps.setString(1, book.getName());
@@ -447,6 +447,7 @@ ps.executeUpdate();
 ```
 
 **Dopo:**
+
 ```java
 try (PreparedStatement ps = con.prepareStatement(UPDATE_BOOK_BY_ID_QUERY)) {
     ps.setString(1, book.getName());
@@ -465,7 +466,6 @@ Non utilizzare `try-with-resources` o non chiudere esplicitamente `PreparedState
 
 L’uso di `try-with-resources` garantisce la **chiusura automatica** delle risorse, anche in caso di eccezioni.
 
-
 ### Classificazione OWASP
 
 - **Categoria:** A06 – Vulnerable and Outdated Components
@@ -475,7 +475,6 @@ L’uso di `try-with-resources` garantisce la **chiusura automatica** delle riso
   - Degradare le performance
   - Rendere il sistema instabile
 
-
 ### Benefici della correzione
 
 - Chiusura automatica e sicura delle risorse
@@ -483,4 +482,3 @@ L’uso di `try-with-resources` garantisce la **chiusura automatica** delle riso
 - Compatibilità con Java moderno (7+)
 - Prevenzione di errori gravi in ambienti di produzione
 - Riduzione dei warning nei sistemi CI/CD come SonarQube
-
