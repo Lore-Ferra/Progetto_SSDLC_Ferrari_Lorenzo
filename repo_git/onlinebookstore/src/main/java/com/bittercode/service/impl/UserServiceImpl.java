@@ -92,9 +92,10 @@ public class UserServiceImpl implements UserService {
             }
 
         } catch (SQLException e) {
-            responseMessage += " : " + e.getMessage();
-            if (responseMessage.contains("Duplicate")) {
+            if (e.getMessage().toLowerCase().contains("duplicate")) {
                 responseMessage = "User already registered with this email !!";
+            } else {
+                responseMessage += " : " + e.getMessage();
             }
             e.printStackTrace();
         }

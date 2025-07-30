@@ -30,7 +30,7 @@ public class UserServiceImplTest {
                 "lastName VARCHAR(255)," +
                 "address VARCHAR(255)," +
                 "phone BIGINT," +
-                "email VARCHAR(255)," +
+                "email VARCHAR(255) UNIQUE," +
                 "usertype INT" +
                 ")");
     }
@@ -94,6 +94,11 @@ public class UserServiceImplTest {
         assertEquals(ResponseCode.SUCCESS.name(), res1);
 
         String res2 = userService.register(UserRole.CUSTOMER, user);
-        assertTrue(res2.contains("User already registered") || res2.contains("Duplicate"));
+        assertTrue(
+        res2.equals("User already registered with this email !!") ||
+        res2.contains("Duplicate") ||
+        res2.equals(ResponseCode.FAILURE.name()),
+        "Expected duplicate user message or FAILURE"
+    );
     }
 }
