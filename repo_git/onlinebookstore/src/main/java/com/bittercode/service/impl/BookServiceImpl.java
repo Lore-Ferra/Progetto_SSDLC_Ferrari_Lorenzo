@@ -98,7 +98,9 @@ public class BookServiceImpl implements BookService {
                 response = ResponseCode.SUCCESS.name();
             }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error deleting book with ID: " + bookId, e);
+            if (LOGGER.isLoggable(Level.SEVERE)) {
+                LOGGER.log(Level.SEVERE, "Error deleting book with ID: " + bookId, e);
+            }
             response += " : " + e.getMessage();
         }
 
@@ -121,7 +123,9 @@ public class BookServiceImpl implements BookService {
                 responseCode = ResponseCode.SUCCESS.name();
             }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error adding book: " + book.getName() + ", barcode: " + book.getBarcode(), e);
+            if (LOGGER.isLoggable(Level.SEVERE)) {
+                LOGGER.log(Level.SEVERE, "Error adding book: " + book.getName() + ", barcode: " + book.getBarcode(), e);
+            }
             responseCode += " : " + e.getMessage();
         }
 
@@ -139,7 +143,9 @@ public class BookServiceImpl implements BookService {
             ps.executeUpdate();
             responseCode = ResponseCode.SUCCESS.name();
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error updating quantity for book ID: " + bookId, e);
+            if (LOGGER.isLoggable(Level.SEVERE)) {
+                LOGGER.log(Level.SEVERE, "Error updating quantity for book ID: " + bookId, e);
+            }
             responseCode += " : " + e.getMessage();
         }
 
@@ -194,7 +200,9 @@ public class BookServiceImpl implements BookService {
             ps.executeUpdate();
             responseCode = ResponseCode.SUCCESS.name();
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error updating book: " + book.getBarcode(), e);
+            if (LOGGER.isLoggable(Level.SEVERE)) {
+                LOGGER.log(Level.SEVERE, "Error updating book: " + book.getBarcode(), e);
+            }
             responseCode += " : " + e.getMessage();
         }
 
