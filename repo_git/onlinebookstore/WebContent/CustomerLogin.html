@@ -236,15 +236,16 @@
         }
 
         // Genera CAPTCHA dinamico
-        var a = Math.ceil(Math.random() * 9) + "";
-        var b = Math.ceil(Math.random() * 9) + "";
-        var c = Math.ceil(Math.random() * 9) + "";
-        var d = Math.ceil(Math.random() * 9) + "";
-        var e = Math.ceil(Math.random() * 9) + "";
-        var code = a + b + c + d + e;
+        var code = generateSecureCaptcha();
 
         document.getElementById("txtCaptcha").value = code;
         document.getElementById("CaptchaDiv").innerHTML = code;
+      }
+
+      function generateSecureCaptcha(length = 5) {
+        const array = new Uint8Array(length);
+        window.crypto.getRandomValues(array);
+        return Array.from(array, (x) => (x % 10).toString()).join("");
       }
     </script>
   </body>
