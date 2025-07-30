@@ -184,7 +184,7 @@ class BookServiceImplTest {
         when(mockResultSet.getInt(4)).thenReturn(100);
         when(mockResultSet.getInt(5)).thenReturn(10);
 
-        List<Book> books = bookService.getBooksByCommaSeperatedBookIds("'001'");
+        List<Book> books = bookService.getBooksByCommaSeparatedBookIds("'001'");
 
         assertEquals(1, books.size());
         assertEquals("001", books.get(0).getBarcode());
@@ -194,6 +194,6 @@ class BookServiceImplTest {
     void testGetBooksByCommaSeparatedBookIdsSQLException() throws Exception {
         when(mockConnection.prepareStatement(anyString())).thenThrow(new SQLException("Error"));
 
-        assertThrows(StoreException.class, () -> bookService.getBooksByCommaSeperatedBookIds("'001','002'"));
+        assertThrows(StoreException.class, () -> bookService.getBooksByCommaSeparatedBookIds("'001','002'"));
     }
 }
