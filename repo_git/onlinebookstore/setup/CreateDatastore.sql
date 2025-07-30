@@ -19,6 +19,6 @@ CREATE TABLE if not exists books
      lastname  VARCHAR(100) NOT NULL, 
      address   TEXT NOT NULL, 
      phone     VARCHAR(100) NOT NULL, 
-     mailid    VARCHAR(100) NOT NULL,
+     mailid    VARCHAR(100) NOT NULL UNIQUE,
      usertype  INT
   ); 
