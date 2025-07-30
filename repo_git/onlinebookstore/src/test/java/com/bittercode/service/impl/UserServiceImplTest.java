@@ -14,7 +14,7 @@ import java.sql.Statement;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class UserServiceImplTest {
+class UserServiceImplTest {
 
     private UserServiceImpl userService;
     private HttpSession session;
