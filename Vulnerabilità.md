@@ -1,6 +1,6 @@
 ### Vulnerabilità 1 - (Low)
 
-Nella classe StoreException, i campi errorCode, errorMessage e statusCode sono stati resi final per impedirne la modifica dopo l’inizializzazione.
+I campi errorCode, errorMessage e statusCode, nella classe StoreException, sono stati resi final per impedirne la modifica dopo l’inizializzazione.
 
 ![Vulnerabilità 1](./img/Vulnerabilità-1.png)
 
@@ -45,7 +45,7 @@ In contesti multi-threaded o non controllati, i setter avrebbero potuto essere s
 
 - Migliore **integrità** e **affidabilità** dell’oggetto StoreException
 - Prevenzione di **manipolazioni a runtime**
-- Codice più \*sicuro, **chiaro** e conforme alle **best practice DevSecOps**
+- Codice più sicuro, **chiaro** e conforme alle **best practice DevSecOps**
 - Maggiore **tracciabilità** e **coerenza nei log di errore**
 
 ## Vulnerabilità 2 – (Low)
@@ -70,10 +70,10 @@ List<Book> books = new ArrayList<>();
 
 L’utilizzo del diamond operator (`<>`) introdotto in Java 7 evita la duplicazione ridondante del tipo e migliora:
 
-- La **leggibilità** del codice
-- La **manutenibilità**
-- La **sicurezza evolutiva** del codice (se cambia il tipo, si modifica una sola volta)
-- La **conformità** con le best practice di sviluppo moderne
+- **leggibilità** del codice
+- **manutenibilità**
+- **sicurezza evolutiva** del codice (se cambia il tipo, si modifica una sola volta)
+- **conformità** con le best practice di sviluppo moderne
 
 ### Classificazione OWASP
 
@@ -86,8 +86,7 @@ L’utilizzo del diamond operator (`<>`) introdotto in Java 7 evita la duplicazi
 
 - Migliore **conformità** agli standard Java
 - Codice più **chiaro** e privo di duplicazioni inutili
-- Facilita il lavoro in team e l’integrazione con tool statici come **SonarQube**
-- Riduce la possibilità di **refusi** durante il refactoring
+- Riduce possibilità di **refusi** durante refactoring
 
 ### Vulnerabilità 3 – (Medium)
 
@@ -115,11 +114,11 @@ Le servlet sono **singleton gestiti dal container**: un solo oggetto `CartServle
 - Essere fonte di bug se accidentalmente mutati
 - Creare problemi di thread safety in caso di modifiche future
 
-La modifica a `static final` garantisce che la dipendenza:
+La modifica a `static final` garantisce che la dipendenza sia:
 
-- sia **immutabile**
-- sia **unica e condivisa**
-- rispetto le **best practice**
+- **immutabile**
+- **unica e condivisa**
+- rispetti le **best practice**
 
 #### Classificazione OWASP
 
@@ -127,19 +126,19 @@ La modifica a `static final` garantisce che la dipendenza:
   - A05 – Security Misconfiguration
   - A04 – Insecure Design (per cattiva progettazione dello scope degli oggetti)
 - **Gravità:** Media (Medium)
-- **Rischio:** Medio. Anche se non introduce direttamente una vulnerabilità exploitabile, può causare condizioni di concorrenza o instabilità se il campo viene mutato da più thread.
+- **Rischio:** Medio. Anche se non introduce direttamente vulnerabilità exploitabili, può causare condizioni di concorrenza o instabilità se il campo viene mutato da più thread.
 
 #### Benefici della correzione
 
-- Conformità ai principi di progettazione sicura per servlet
+- Conforme ai **principi** di **progettazione sicura** per servlet
 - Miglioramento della **thread safety**
-- Rende il codice più **leggibile** e **testabile**
-- Evita **ambiguità semantica** sullo scope del campo
-- Agevola strumenti di analisi statica come **SonarQube**
+- Rendere il codice più **leggibile** e **testabile**
+- Evitare **ambiguità semantica** sullo scope del campo
+- **Agevolare** strumenti di analisi statica come **SonarQube**
 
 ### Vulnerabilità 4 – (Medium)
 
-In alcune servlet (es. `CustomerRegisterServlet`, `CartServlet`) mancava l'annotazione `@Override` sopra la dichiarazione del metodo `service(...)`.
+In alcune servlet (es. `CustomerRegisterServlet`, `CartServlet`) mancava l'annotazione `@Override` prima della dichiarazione del metodo `service(...)`.
 
 **Prima:**
 
@@ -158,8 +157,8 @@ public void service(HttpServletRequest req, HttpServletResponse res) throws IOEx
 
 L'annotazione `@Override` è essenziale per garantire che un metodo stia effettivamente sovrascrivendo una definizione nella superclasse (`HttpServlet`). La sua assenza può causare:
 
-- **Errori silenziosi**, ad esempio quando si sbaglia la firma del metodo (nome, parametri o tipo di ritorno)
-- **Comportamenti inattesi** in fase di esecuzione, perché il metodo definito non viene mai invocato
+- **Errori silenziosi**, ad esempio: sbagliata firma del metodo (nome, parametri o tipo di ritorno)
+- **Comportamenti inattesi** in fase di esecuzione, il metodo definito non viene mai invocato
 - **Difficoltà** nell'uso di strumenti di analisi statica o refactoring automatico
 
 #### Classificazione OWASP
@@ -167,14 +166,14 @@ L'annotazione `@Override` è essenziale per garantire che un metodo stia effetti
 - **Categoria:**
   - A06 – Vulnerable and Outdated Components (cattivo uso delle funzionalità del linguaggio)
 - **Gravità:** Media (Medium)
-- **Rischio:** Potenziale malfunzionamento dell’applicazione in caso di firma errata non rilevata a compilazione. Non è una falla di sicurezza diretta, ma può causare instabilità o bug difficili da diagnosticare.
+- **Rischio:** Potenziale malfunzionamento dell’applicazione in caso di firma errata, non rilevata a compilazione. Non è una falla di sicurezza diretta, ma può causare instabilità o bug difficili da diagnosticare.
 
 #### Benefici della correzione
 
-- Evita **errori di overriding silenziosi**
-- Migliora la **leggibilità** e la **manutenibilità** del codice
-- Favorisce l'integrazione con strumenti come **SonarQube**, **IDE**, **CI/CD**
-- Rende il comportamento della servlet **più prevedibile e corretto**
+- Evitare **errori di overriding silenziosi**
+- Migliorare **leggibilità** e **manutenibilità** del codice
+- Favorire integrazione con strumenti come **SonarQube**, **IDE**, **CI/CD**
+- Rendere comportamento della servlet **più prevedibile e corretto**
 
 
 ## Vulnerabilità 5 – (Medium)
@@ -219,7 +218,7 @@ L’utilizzo diretto di `System.out` in ambienti enterprise o concorrenti è con
 - Compromette la leggibilità dei log in produzione
 - Rende difficile l’integrazione con strumenti di monitoraggio e log analysis (es. ELK, Splunk)
 
-L’uso del logger standard (`java.util.logging.Logger`) permette invece di:
+L’uso del logger standard (`java.util.logging.Logger`) permette, invece, di:
 
 - Distinguere tra log informativi, di errore o di debug
 - Centralizzare la configurazione dei log
@@ -234,7 +233,7 @@ L’uso del logger standard (`java.util.logging.Logger`) permette invece di:
   - A05 – Security Misconfiguration (per ambienti non correttamente configurati alla gestione dei log)
 
 - **Gravità:** Media (Medium)
-- **Rischio:** Moderato. Non espone direttamente a un attacco, ma può:
+- **Rischio:** Moderato. Non espone direttamente ad un attacco, ma può:
   - Nascondere o perdere informazioni importanti in produzione
   - Rendere più difficile il troubleshooting
   - Rendere il sistema non conforme agli standard aziendali
@@ -369,7 +368,7 @@ Anche se racchiuso in una costante, l'uso di `SELECT *`:
 
 ### Benefici della correzione
 
-- Rispetto delle naming convention Java
+- Rispettare naming convention Java
 - SQL più sicuro, esplicito e performante
 - Codice più leggibile e conforme agli standard aziendali
 - Riduzione dei warning nei sistemi CI/CD
