@@ -291,7 +291,7 @@ Al suo interno sono incluse vulnerabilità, ciascuna documentata con:
 ## Repository del Codice Sorgente Analizzato
 
 Il progetto scelto è un’applicazione Java:  
-🔗 [onlinebookstore](https://github.com/shashirajraja/onlinebookstore)
+[onlinebookstore](https://github.com/shashirajraja/onlinebookstore)
 
 
 
