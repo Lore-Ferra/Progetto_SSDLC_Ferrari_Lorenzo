@@ -185,12 +185,19 @@ La pipeline è composta dai seguenti stage:
 - Plugin: Git, Maven, SonarQube Scanner, OWASP Dependency Check, Pipeline.
 - Pipeline definita tramite `Jenkinsfile` nel repository.
 
+![Jenkins](./img/Jenkins.png)
+
+![JenkinsPipeline](./img/JenkinsPipeline.png)
+
+![JenkinsBuilds](./img/JenkinsBuilds.png)
+
 ### SonarQube
 - Container Docker con backend PostgreSQL.
 - Progetto configurato manualmente.
 - Quality Gate **standard** di SonarQube utilizzato senza modifiche, con soglie predefinite su vulnerabilità, code smell e coverage.
 - Scanner integrato nella pipeline Jenkins tramite token di accesso.
 
+![Sonarqube](./img/Sonarqube.png)
 
 ## Modifiche alle Dipendenze per Motivi di Sicurezza
 
@@ -208,6 +215,10 @@ Durante la scansione SCA, sono state rilevate vulnerabilità critiche o ad alta 
 | `h2`                   | Non presente       | 2.2.224        | -                              | Aggiunta   | Usata nei test come database in-memory. Ultima versione stabile, priva di vulnerabilità note.                              |
 
 Tutte le modifiche sono state verificate tramite build Jenkins e analisi statica con SonarQube. Dopo ogni aggiornamento, è stato eseguito un nuovo ciclo di test e controllo dei Quality Gate.
+
+![logback-core](./img/logback-core.png)
+
+![Dependency-Check](./img/Dependency-Check.png)
 
 ## Risultati delle Scansioni
 
@@ -230,12 +241,15 @@ Durante l'esecuzione della pipeline CI/CD sono stati rilevati i seguenti problem
 ### Altri indicatori
 
 - **Duplicazione del codice:** 10.2%
-- **Code Coverage:** 0.0% iniziale
+- **Code Coverage:** 0.0%
+- **Security Hotspot:** 59
+
 ![Risultati iniziali SonarQube](./img/image.png)
 
 ### Situazione finale
 Dopo l’aggiunta di test (JUnit + Jacoco), refactoring e aggiornamento delle dipendenze:
 - Nessuna vulnerabilità o bug rilevati.
+- Tutti i **Security Hotspot** sono stati identificati e risolti.
 - Coverage aumentata a **86.8%**
 - Duplicazione codice ridotta a **1.3%**
 - Tutti i Quality Gate superati con valutazione **A** in ogni categoria.
