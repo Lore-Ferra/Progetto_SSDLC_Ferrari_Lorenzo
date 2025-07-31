@@ -199,6 +199,8 @@ La pipeline è composta dai seguenti stage:
 
 ![Sonarqube](./img/Sonarqube.png)
 
+![ImpostazioniSonar](./img/ImpostazioniSonar.png)
+
 ## Modifiche alle Dipendenze per Motivi di Sicurezza
 
 Durante la scansione SCA, sono state rilevate vulnerabilità critiche o ad alta severità in alcune dipendenze. Sono state eseguite modifiche per garantire la conformità ai quality gate.
@@ -287,3 +289,7 @@ In particolare, evidenzia:
 - L’importanza del controllo continuo del codice e delle dipendenze.
 - L’efficacia dell’automazione nella rilevazione e mitigazione di vulnerabilità.
 - Il valore dell’uso di container per ambienti consistenti e portabili.
+
+![ActivityFinale](./img/ActivityFinale.png)
+
+![CoverageFinale](./img/CoverageFinale.png)

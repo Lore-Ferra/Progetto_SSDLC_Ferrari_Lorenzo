@@ -2,6 +2,8 @@
 
 Nella classe StoreException, i campi errorCode, errorMessage e statusCode sono stati resi final per impedirne la modifica dopo l’inizializzazione.
 
+![Vulnerabilità 1](./img/Vulnerabilità-1.png)
+
 **Prima:**
 
 ```java
@@ -37,6 +39,8 @@ In contesti multi-threaded o non controllati, i setter avrebbero potuto essere s
 - **Gravità:** Bassa (Low)
 - **Rischio:** Esporre strutture critiche a configurazioni deboli o modificabili può portare a comportamenti imprevisti e vulnerabilità sfruttabili.
 
+![Vulnerabilità 1 Code Error](./img/Vulnerabilità-1-Code-Error.png)
+
 ### Benefici della Correzione
 
 - Migliore **integrità** e **affidabilità** dell’oggetto StoreException
@@ -47,6 +51,8 @@ In contesti multi-threaded o non controllati, i setter avrebbero potuto essere s
 ## Vulnerabilità 2 – (Low)
 
 In alcune parti del codice, veniva utilizzata una dichiarazione esplicita del tipo generico nel costruttore di `ArrayList`.
+
+![Vulnerabilità 2](./img/Vulnerabilità-2.png)
 
 **Prima:**
 
@@ -86,6 +92,8 @@ L’utilizzo del diamond operator (`<>`) introdotto in Java 7 evita la duplicazi
 ### Vulnerabilità 3 – (Medium)
 
 In alcune servlet (es. `CartServlet`) veniva dichiarato un campo **di istanza mutabile** per una dipendenza condivisa (`BookService`), violando le best practice per la gestione dei componenti in ambienti multithread come le servlet.
+
+![Vulnerabilità 3](./img/Vulnerabilità-3.png)
 
 **Prima:**
 
@@ -168,9 +176,12 @@ L'annotazione `@Override` è essenziale per garantire che un metodo stia effetti
 - Favorisce l'integrazione con strumenti come **SonarQube**, **IDE**, **CI/CD**
 - Rende il comportamento della servlet **più prevedibile e corretto**
 
+
 ## Vulnerabilità 5 – (Medium)
 
 In alcune servlet, come `ErrorHandlerServlet`, veniva utilizzato `System.out.println(...)` per la stampa di messaggi diagnostici e di errore.
+
+![Vulnerabilità 5](./img/Vulnerabilità-5.png)
 
 **Prima:**
 
@@ -368,7 +379,7 @@ Anche se racchiuso in una costante, l'uso di `SELECT *`:
 
 In vari metodi della classe `BookServiceImpl` venivano utilizzati oggetti `PreparedStatement` (e in alcuni casi `ResultSet`) **senza chiusura esplicita**, causando potenziali **resource leak**. Questa violazione delle best practice può portare all'esaurimento delle connessioni al database in ambienti reali e viene segnalata da tool come **SonarQube**.
 
----
+![Vulnerabilità 8](./img/Vulnerabilità-8.png)
 
 ### Metodi coinvolti
 
