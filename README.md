@@ -36,11 +36,13 @@ Container coinvolti:
 - SonarQube
 - PostgreSQL (database per SonarQube)
 
+![Docker](./img/Docker.png)
+
 ## Pipeline CI/CD
 
 La pipeline è composta dai seguenti stage:
 
-- **Stage 1 – Checkout**: clonazione del repository e setup iniziale
+- **Stage 1 – Check-out**: clonazione del repository e setup iniziale
 - **Stage 2 – Build e test**: compilazione tramite Maven e verifica del codice
 - **Stage 3 – Analisi SAST**: scansione con SonarQube
 - **Stage 4 – Analisi SCA**: esecuzione di OWASP Dependency Check
@@ -85,7 +87,7 @@ La pipeline è composta dai seguenti stage:
         }
     }
    ```
-> L'opzione `-Dsonar.token=$SONAR_TOKEN` viene usata per autenticarsi rapidamente a SonarQube, evitando rallentamenti o errori durante la scansione in ambienti CI.
+    > L'opzione `-Dsonar.token=$SONAR_TOKEN` viene usata per autenticarsi rapidamente a SonarQube, evitando rallentamenti o errori durante la scansione in ambienti CI.
 
 
 4. **Analisi delle dipendenze (SCA)**  
@@ -177,6 +179,8 @@ La pipeline è composta dai seguenti stage:
     }
    ```
 
+   ![Discord](./img/Discord.png)
+
 
 ## Configurazioni Principali
 
@@ -185,11 +189,15 @@ La pipeline è composta dai seguenti stage:
 - Plugin: Git, Maven, SonarQube Scanner, OWASP Dependency Check, Pipeline.
 - Pipeline definita tramite `Jenkinsfile` nel repository.
 
+
 ![Jenkins](./img/Jenkins.png)
+>Homepage di Jenkins dove sono presenti le pipeline create
 
 ![JenkinsPipeline](./img/JenkinsPipeline.png)
+>Visualizzazione di una build 
 
 ![JenkinsBuilds](./img/JenkinsBuilds.png)
+> Visualizzazione storico delle build
 
 ### SonarQube
 - Container Docker con backend PostgreSQL.
@@ -198,8 +206,10 @@ La pipeline è composta dai seguenti stage:
 - Scanner integrato nella pipeline Jenkins tramite token di accesso.
 
 ![Sonarqube](./img/Sonarqube.png)
+>Homepage di SonarQube dove sono presenti i progetti verificati
 
 ![ImpostazioniSonar](./img/ImpostazioniSonar.png)
+>Presetting di Jenkins per collegamento a SonarQube
 
 ## Modifiche alle Dipendenze per Motivi di Sicurezza
 
@@ -218,9 +228,12 @@ Durante la scansione SCA, sono state rilevate vulnerabilità critiche o ad alta 
 
 Tutte le modifiche sono state verificate tramite build Jenkins e analisi statica con SonarQube. Dopo ogni aggiornamento, è stato eseguito un nuovo ciclo di test e controllo dei Quality Gate.
 
+
 ![logback-core](./img/logback-core.png)
+>Schermata di Maven per verifica dell'ultima versione della libreria disponibile senza vulnerabilità trovate
 
 ![Dependency-Check](./img/Dependency-Check.png)
+> Artefatto generato dalla pipeline CI/CD tramite OWASP Dependency-Check utilizzato per rilevare vulnerabilità note nelle dipendenze del progetto.
 
 ## Risultati delle Scansioni
 
@@ -284,8 +297,8 @@ Il progetto scelto è un’applicazione Java:
 
 ## Conclusioni
 
-Questo progetto dimostra come integrare con successo pratiche di sviluppo sicuro all’interno di un processo DevOps attraverso strumenti open-source e automatizzazione CI/CD.  
-In particolare, evidenzia:
+Questo progetto dimostra come integrare con successo pratiche di sviluppo sicuro all’interno di un processo DevOps tramite strumenti open-source e automatizzazione CI/CD.  
+Viene evidenziato:
 - L’importanza del controllo continuo del codice e delle dipendenze.
 - L’efficacia dell’automazione nella rilevazione e mitigazione di vulnerabilità.
 - Il valore dell’uso di container per ambienti consistenti e portabili.
